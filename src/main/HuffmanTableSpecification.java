@@ -37,10 +37,10 @@ public class HuffmanTableSpecification {
     //is initialized)
     private Map<Integer, int[]> vij = new HashMap<>();
     
-    private HuffmanTableSpecification(int[] header) {
+    public HuffmanTableSpecification(int[] header) {
         this.header = header;
         
-        int pos = 2;
+        int pos = 0;
         lh = (header[pos] << 8) + header[pos+1];
         pos+=2;
         
