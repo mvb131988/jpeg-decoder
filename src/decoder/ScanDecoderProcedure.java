@@ -23,7 +23,7 @@ public class ScanDecoderProcedure {
         
         //TODO: could be more than one restart interval, however for the first example only 
         //one restart interval is present
-        ridp.decodeRestartInterval(br);
+        ridp.decodeRestartInterval(br, dc);
     }
     
 }

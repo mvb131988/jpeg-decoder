@@ -10,6 +10,8 @@ public class FrameDecoderProcedure {
     
     private ScanDecoderProcedure sdp = new ScanDecoderProcedure();
     
+    private DimensionsCalculator dimensionsCalculator = new DimensionsCalculator();
+    
     /**
      * 
      * @param br - is set to the first frame header bit(frame header marker already processed) 
@@ -26,6 +28,7 @@ public class FrameDecoderProcedure {
         for(int i=2; i<frameSize; i++) frameHeader[i] = br.next();
         
         FrameHeader fh = new FrameHeader(frameHeader);
+        dc.dimensionsContext = dimensionsCalculator.calculate(fh);
         
         //lookup for start of scan SOS. Expected only image that consists of one scan. 
         //TODO - check number of scans for baseline DCT

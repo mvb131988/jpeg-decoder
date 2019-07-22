@@ -8,5 +8,6 @@ import main.HuffmanTableSpecification;
 public class DecoderContext {
 
     public List<HuffmanTableSpecification> htsList = new ArrayList<HuffmanTableSpecification>();
+    public DimensionsContext dimensionsContext;
     
 }
