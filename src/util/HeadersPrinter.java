@@ -23,8 +23,8 @@ public class HeadersPrinter {
     }
     
     public void print() {
-        for(String h: headers)
-            System.out.println(h);
+//        for(String h: headers)
+//            System.out.println(h);
     }
     
 }

@@ -28,6 +28,7 @@ public class FrameDecoderProcedure {
         for(int i=2; i<frameSize; i++) frameHeader[i] = br.next();
         
         FrameHeader fh = new FrameHeader(frameHeader);
+        dc.frameHeader = fh;
         dc.dimensionsContext = dimensionsCalculator.calculate(fh);
         
         //lookup for start of scan SOS. Expected only image that consists of one scan. 

@@ -20,6 +20,7 @@ public class ScanDecoderProcedure {
         for(int i=2; i<scanSize; i++) scanHeader[i] = br.next();
         
         ScanHeader sh = new ScanHeader(scanHeader);
+        dc.scanHeader = sh;
         
         //TODO: could be more than one restart interval, however for the first example only 
         //one restart interval is present

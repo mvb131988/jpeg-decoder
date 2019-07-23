@@ -33,7 +33,7 @@ public class NextBitReader {
         cnt--;
         b = (b << 1) & 0xff;
         
-        System.out.print(bit);
+        //System.out.print(bit);
         return bit; 
     }
     

@@ -11,10 +11,10 @@ public class HuffmanTableSpecification {
     private int lh;
     
     // Table class – 0 = DC table or lossless table, 1 = AC table
-    private int tc;
+    public int tc;
     
     //Huffman table destination identifier
-    private int th;
+    public int th;
     
     //Number of Huffman codes of length i 
     private int[] lis = new int[16];
@@ -60,7 +60,7 @@ public class HuffmanTableSpecification {
             }
         }
         
-        System.out.println(vij);
+//        System.out.println(vij);
     }
     
     public static HuffmanTableSpecification checkAndBuild(int[] header) {
