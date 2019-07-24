@@ -3,10 +3,10 @@ package decoder;
 import java.io.IOException;
 import java.util.List;
 
-import main.FrameHeader;
-import main.HuffmanTableSelector;
-import main.HuffmanTableSpecification;
-import main.ScanHeader;
+import markers.FrameHeader;
+import markers.HuffmanTableSelector;
+import markers.HuffmanTableSpecification;
+import markers.ScanHeader;
 import util.BufferedReader;
 
 public class MCUDecoderProcedure {

@@ -3,7 +3,7 @@ package decoder;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import main.FrameHeader;
+import markers.FrameHeader;
 
 public class DimensionsCalculator {
 

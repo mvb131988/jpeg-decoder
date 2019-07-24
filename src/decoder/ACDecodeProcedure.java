@@ -15,12 +15,15 @@ public class ACDecodeProcedure extends AbstractDecodeProcedure {
             int R = RRRR;
             
             if(SSSS == 0) {
-                //separate flow here
                 if(R != 15) break;
+                k = k + 16;
+                continue;
             }
             
             k = k + R;
             zz[k] = decodeZZk(SSSS, nbr);
+            
+            k++;
         }
         
         return zz;

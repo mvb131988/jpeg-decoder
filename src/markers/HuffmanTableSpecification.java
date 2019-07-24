@@ -1,4 +1,4 @@
-package main;
+package markers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,16 +8,19 @@ public class HuffmanTableSpecification {
     private int[] header;
     
     //Huffman table definition length
-    private int lh;
+    //Most significant byte first
+    public int lh;
     
     // Table class – 0 = DC table or lossless table, 1 = AC table
+    // Most significant 4 bits of the byte
     public int tc;
     
     //Huffman table destination identifier
+    // Least significant 4 bits of the byte
     public int th;
     
     //Number of Huffman codes of length i 
-    private int[] lis = new int[16];
+    public int[] lis = new int[16];
     
     //Value associated with each Huffman code
     //
@@ -35,7 +38,7 @@ public class HuffmanTableSpecification {
     //and they are header[22] = 1, header[23] = 2, header[24] = 3, header[25] = 4, header[26] = 5
     //Same procedure is applied till the end. Sum of lis values is equal to 'header.length-pos' (where pos just after lis 
     //is initialized)
-    private Map<Integer, int[]> vij = new HashMap<>();
+    public Map<Integer, int[]> vij = new HashMap<>();
     
     public HuffmanTableSpecification(int[] header) {
         this.header = header;
@@ -44,8 +47,8 @@ public class HuffmanTableSpecification {
         lh = (header[pos] << 8) + header[pos+1];
         pos+=2;
         
-        tc = header[pos] & 0x0F;
-        th = (header[pos] & 0x0F0)>>4;
+        tc = (header[pos] & 0x0F0)>>4;
+        th = header[pos] & 0x0F;
         pos++;
         
         for(int i0=0, i=pos; i<pos+16; i++, i0++) {

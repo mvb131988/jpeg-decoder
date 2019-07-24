@@ -2,7 +2,6 @@ package decoder;
 
 import java.io.IOException;
 
-import main.ImageReader;
 import util.BufferedReader;
 
 public class NextBitReader {
@@ -20,12 +19,21 @@ public class NextBitReader {
         this.cnt = 0;
     }
     
+    /**
+     * Byte sequence ff00 is discarded. 
+     * 
+     * @return
+     * @throws IOException
+     */
     public int nextBit() throws IOException {
         if(cnt == 0) {
             b = br.next();
             cnt = 8;
             if(b == 0xff) {
-                //TODO: implement couple of corner cases
+                b2 = br.next();
+                if(b2 != 0) {
+                    //TODO: process DNL. in current example no DNL
+                }
             }
         }
         

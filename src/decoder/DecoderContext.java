@@ -3,9 +3,9 @@ package decoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import main.FrameHeader;
-import main.HuffmanTableSpecification;
-import main.ScanHeader;
+import markers.FrameHeader;
+import markers.HuffmanTableSpecification;
+import markers.ScanHeader;
 
 public class DecoderContext {
 

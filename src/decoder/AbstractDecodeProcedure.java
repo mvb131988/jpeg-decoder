@@ -23,7 +23,8 @@ public abstract class AbstractDecodeProcedure {
         }
         
         int j = valPtr[i];
-        j = j + code - minCode[i];
+        j = j + code;
+        j -= minCode[i];
         int t = huffVal.get(j);
         
         int[] tArr = new int[] {t};

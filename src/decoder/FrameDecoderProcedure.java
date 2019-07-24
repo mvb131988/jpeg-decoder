@@ -2,8 +2,8 @@ package decoder;
 
 import java.io.IOException;
 
-import main.FrameHeader;
-import main.HuffmanTableSpecification;
+import markers.FrameHeader;
+import markers.HuffmanTableSpecification;
 import util.BufferedReader;
 
 public class FrameDecoderProcedure {

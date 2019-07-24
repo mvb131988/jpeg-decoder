@@ -2,7 +2,7 @@ package decoder;
 
 import java.io.IOException;
 
-import main.ScanHeader;
+import markers.ScanHeader;
 import util.BufferedReader;
 
 public class ScanDecoderProcedure {

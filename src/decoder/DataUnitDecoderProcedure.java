@@ -2,8 +2,8 @@ package decoder;
 
 import java.io.IOException;
 
-import main.HuffmanTableSpecification;
-import main.HuffmanTableSpecificationsTransformer;
+import markers.HuffmanTableSpecification;
+import markers.HuffmanTableSpecificationsTransformer;
 import util.BufferedReader;
 
 public class DataUnitDecoderProcedure {

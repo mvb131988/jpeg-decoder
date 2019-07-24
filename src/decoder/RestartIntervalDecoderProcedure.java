@@ -24,9 +24,8 @@ public class RestartIntervalDecoderProcedure {
         for(int j=0; j<nY; j++)
             for(int i=0; i<nX; i++) {
                 rows[j][i] = dp.decodeMCU(br, dc);
+                System.out.println("j = " + j);
             }
-        
-        System.out.println("decoded x");
     }
     
 }

@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-import main.HuffmanTableSpecification;
+import markers.HuffmanTableSpecification;
 import util.BufferedReader;
 
 /**
