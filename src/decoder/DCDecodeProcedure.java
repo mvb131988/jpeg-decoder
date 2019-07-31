@@ -2,11 +2,13 @@ package decoder;
 
 import java.io.IOException;
 
+import markers.HuffmanTableSpecificationsTransformer.DecodeTables;
+
 public class DCDecodeProcedure extends AbstractDecodeProcedure {
     
-    public int[] decode(DecodePreProcedureContext c, NextBitReader nbr) throws IOException {
+    public int[] decodeDc(DecodeTables dcDt, int[] huffVal, NextBitReader nbr) throws IOException {
         //huffVal
-        int t = super.decode(c, nbr)[0];
+        int t = super.decode(dcDt, huffVal, nbr)[0];
         int diff = receive(t, nbr);
         diff = extend(diff, t);
        

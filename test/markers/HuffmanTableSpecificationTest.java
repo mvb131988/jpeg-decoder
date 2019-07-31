@@ -55,39 +55,42 @@ public class HuffmanTableSpecificationTest {
         //Number of Huffman codes of length 16
         assertEquals(0, hts.lis[15]);
         
-        //Values associated with Huffman codes of length 1
-        assertEquals(null, hts.vij.get(1));
+        assertOrder(new int[] {0,1,2,3,4,5,6,7,8,9,10,11}, hts.vij);
         
-        //Values associated with Huffman codes of length 2
-        assertOrder(new int[] {0}, hts.vij.get(2));
-        //Values associated with Huffman codes of length 3
-        assertOrder(new int[] {1,2,3,4,5}, hts.vij.get(3));
-        //Values associated with Huffman codes of length 4
-        assertOrder(new int[] {6}, hts.vij.get(4));
-        //Values associated with Huffman codes of length 5
-        assertOrder(new int[] {7}, hts.vij.get(5));
-        //Values associated with Huffman codes of length 6
-        assertOrder(new int[] {8}, hts.vij.get(6));
-        //Values associated with Huffman codes of length 7
-        assertOrder(new int[] {9}, hts.vij.get(7));
-        //Values associated with Huffman codes of length 8
-        assertOrder(new int[] {10}, hts.vij.get(8));
-        //Values associated with Huffman codes of length 9
-        assertOrder(new int[] {11}, hts.vij.get(9));
-        //Values associated with Huffman codes of length 10
-        assertEquals(null, hts.vij.get(10));
-        //Values associated with Huffman codes of length 11
-        assertEquals(null, hts.vij.get(11));
-        //Values associated with Huffman codes of length 12
-        assertEquals(null, hts.vij.get(12));
-        //Values associated with Huffman codes of length 13
-        assertEquals(null, hts.vij.get(13));
-        //Values associated with Huffman codes of length 14
-        assertEquals(null, hts.vij.get(14));
-        //Values associated with Huffman codes of length 15
-        assertEquals(null, hts.vij.get(15));
-        //Values associated with Huffman codes of length 16
-        assertEquals(null, hts.vij.get(16));
+        //TODO: asserts for huffcode huffsize generation
+//        //Values associated with Huffman codes of length 1
+//        assertEquals(null, hts.vij.get(1));
+//        
+//        //Values associated with Huffman codes of length 2
+//        assertOrder(new int[] {0}, hts.vij.get(2));
+//        //Values associated with Huffman codes of length 3
+//        assertOrder(new int[] {1,2,3,4,5}, hts.vij.get(3));
+//        //Values associated with Huffman codes of length 4
+//        assertOrder(new int[] {6}, hts.vij.get(4));
+//        //Values associated with Huffman codes of length 5
+//        assertOrder(new int[] {7}, hts.vij.get(5));
+//        //Values associated with Huffman codes of length 6
+//        assertOrder(new int[] {8}, hts.vij.get(6));
+//        //Values associated with Huffman codes of length 7
+//        assertOrder(new int[] {9}, hts.vij.get(7));
+//        //Values associated with Huffman codes of length 8
+//        assertOrder(new int[] {10}, hts.vij.get(8));
+//        //Values associated with Huffman codes of length 9
+//        assertOrder(new int[] {11}, hts.vij.get(9));
+//        //Values associated with Huffman codes of length 10
+//        assertEquals(null, hts.vij.get(10));
+//        //Values associated with Huffman codes of length 11
+//        assertEquals(null, hts.vij.get(11));
+//        //Values associated with Huffman codes of length 12
+//        assertEquals(null, hts.vij.get(12));
+//        //Values associated with Huffman codes of length 13
+//        assertEquals(null, hts.vij.get(13));
+//        //Values associated with Huffman codes of length 14
+//        assertEquals(null, hts.vij.get(14));
+//        //Values associated with Huffman codes of length 15
+//        assertEquals(null, hts.vij.get(15));
+//        //Values associated with Huffman codes of length 16
+//        assertEquals(null, hts.vij.get(16));
     }
     
     private void assertOrder(int[] expected, int[] actual) {

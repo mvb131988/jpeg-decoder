@@ -52,9 +52,18 @@ public class DimensionsCalculator {
         /////////////////////////////////////////////////////////////////////////
         int[] extXDataUnit = null;
         int[] extYDataUnit = null;
+        int[] finalExtXs = null;
+        int[] finalExtYs = null;
+
         if(Nf > 1) {
             extXDataUnit = extend2(dataUnitsXs, Hs);
             extYDataUnit = extend2(dataUnitsYs, Vs);
+        
+            //second extension of numbers of samples per row AND/OR column.
+            //after number of data units has been extended, number of samples in row/column also
+            //need to be extended by 8*(number of extended data units - number of data units)
+            finalExtXs = extend3(dataUnitsXs, extXDataUnit, extXs);
+            finalExtYs = extend3(dataUnitsYs, extYDataUnit, extYs);
         }
         
         return new DimensionsContext(Xs, 
@@ -64,7 +73,9 @@ public class DimensionsCalculator {
                                      dataUnitsXs, 
                                      dataUnitsYs,
                                      extXDataUnit, 
-                                     extYDataUnit);
+                                     extYDataUnit,
+                                     finalExtXs,
+                                     finalExtYs);
     }
     
     private int[] extend1(int[] in) {
@@ -87,6 +98,15 @@ public class DimensionsCalculator {
             while (copy[i] % ks[i] != 0)
                 copy[i]++;
         return copy;
+    }
+    
+    private int[] extend3(int[] dataUnits, int[] extXDataUnit, int[] extSamples) {
+        int[] res = new int[dataUnits.length];
+        
+        for(int i=0; i<res.length; i++)
+            res[i] = extSamples[i] + (extXDataUnit[i]-dataUnits[i])*8;
+        
+        return res;
     }
     
 }

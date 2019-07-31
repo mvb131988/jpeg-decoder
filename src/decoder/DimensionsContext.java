@@ -10,6 +10,8 @@ public class DimensionsContext {
     public int[] dataUnitsYs;
     public int[] extXDataUnit;
     public int[] extYDataUnit;
+    public int[] finalExtXs;
+    public int[] finalExtYs;
     
     public DimensionsContext(int[] xs, 
                              int[] ys, 
@@ -18,7 +20,9 @@ public class DimensionsContext {
                              int[] dataUnitsXs, 
                              int[] dataUnitsYs,
                              int[] extXDataUnit, 
-                             int[] extYDataUnit)
+                             int[] extYDataUnit,
+                             int[] finalExtXs,
+                             int[] finalExtYs)
     {
         super();
         Xs = xs;
@@ -29,6 +33,8 @@ public class DimensionsContext {
         this.dataUnitsYs = dataUnitsYs;
         this.extXDataUnit = extXDataUnit;
         this.extYDataUnit = extYDataUnit;
+        this.finalExtXs = finalExtXs;
+        this.finalExtYs = finalExtYs;
     }
     
 }

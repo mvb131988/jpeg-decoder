@@ -1,8 +1,5 @@
 package markers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class HuffmanTableSpecification {
 
     private int[] header;
@@ -22,6 +19,7 @@ public class HuffmanTableSpecification {
     //Number of Huffman codes of length i 
     public int[] lis = new int[16];
     
+    //TODO:review comments
     //Value associated with each Huffman code
     //
     //How to calculate
@@ -38,7 +36,7 @@ public class HuffmanTableSpecification {
     //and they are header[22] = 1, header[23] = 2, header[24] = 3, header[25] = 4, header[26] = 5
     //Same procedure is applied till the end. Sum of lis values is equal to 'header.length-pos' (where pos just after lis 
     //is initialized)
-    public Map<Integer, int[]> vij = new HashMap<>();
+    public int[] vij = null;
     
     public HuffmanTableSpecification(int[] header) {
         this.header = header;
@@ -56,27 +54,14 @@ public class HuffmanTableSpecification {
         }
         pos += 16;
         
-        for(int i=0; i<16; i++) {
-            if(lis[i] != 0) {
-                vij.put(i+1, new int[lis[i]]);
-                for(int j=0; j<lis[i]; j++) vij.get(i+1)[j] = header[pos++];
-            }
+        vij = new int[lh-pos];
+        for(int i=pos, i0=0; i<lh; i++,i0++) {
+            vij[i0] = header[i];
         }
-        
-//        System.out.println(vij);
-    }
-    
-    public static HuffmanTableSpecification checkAndBuild(int[] header) {
-        if(header[1] == 0xc4) return new HuffmanTableSpecification(header);
-        return null;
     }
 
     public int[] getLis() {
         return lis;
     }
 
-    public Map<Integer, int[]> getVij() {
-        return vij;
-    }
-    
 }

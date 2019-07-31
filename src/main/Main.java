@@ -5,7 +5,7 @@ import decoder.DecoderControlProcedure;
 public class Main {
     
     public static void main(String[] args) throws Exception {
-        DecoderControlProcedure dcp = new DecoderControlProcedure("fx_rate_pair.jpg");
+        DecoderControlProcedure dcp = new DecoderControlProcedure("browny.jpg");
         dcp.decodeImage();
     }
 }

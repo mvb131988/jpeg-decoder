@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DecodePreProcedure {
 
+    //Moved to HuffmanTableSpecificationsTransformer
     //TODO: write test to cover the situation
     /**
      * Generates MINCODE, MAXCODE and VALPTR
@@ -17,6 +18,7 @@ public class DecodePreProcedure {
      * maxCode: [_, 0, 6, 14, 30, 62, 126, 254, 510, _, _, _, _, _, _, _]
      * valPtr:  [_, 0, 1, 6, 7, 8, 9, 10, 11, _, _, _, _, _, _, _]
      */
+    @Deprecated
     public DecodePreProcedureContext decode(DecodeProcedureContext dpc) {
         //bits[0] contains number of values of length 1
         int[] bits = dpc.bits;

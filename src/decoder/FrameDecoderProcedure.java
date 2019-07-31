@@ -65,5 +65,13 @@ public class FrameDecoderProcedure {
     private boolean endOfFile(int m0, int m1) {
         return false;
     }
+
+    public ScanDecoderProcedure getSdp() {
+        return sdp;
+    }
+
+    public void setSdp(ScanDecoderProcedure sdp) {
+        this.sdp = sdp;
+    }
     
 }

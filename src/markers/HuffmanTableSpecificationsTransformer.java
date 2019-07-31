@@ -2,8 +2,8 @@ package markers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
+import decoder.DecodePreProcedureContext;
 import decoder.DecodeProcedureContext;
 
 public class HuffmanTableSpecificationsTransformer {
@@ -14,28 +14,30 @@ public class HuffmanTableSpecificationsTransformer {
         //number of codes of each size
         int[] bits = hts.getLis();
         
-        List<Integer> huffVal = huffVal(hts);
+        int[] huffVal = hts.vij;
         List<Integer> huffSize = huffSize(bits);
         List<Integer> huffCode = huffCode(huffSize);
-        DecodeProcedureContext dpc = new DecodeProcedureContext(huffVal, huffSize, huffCode, bits);
         
-        int lastK = huffSize.size();
+        //TODO: pass huffVal
+        DecodeProcedureContext dpc = new DecodeProcedureContext(null, huffSize, huffCode, bits);
+        
+//        int lastK = huffSize.size();
         //////////////////////////////////////////////////////////
         
         //////////////////////////////////////////////////////////
         // USED ONLY FOR ENCODER!!!
-        int i=0;
-        int[] eHufCo = new int[256];
-        int[] eHufSi = new int[256];
-        for(int i0=0; i0<256; i0++) {eHufCo[i0] = -1; eHufSi[i0] = -1;}
-        
-        int k = 0;
-        while (k < lastK-1) {
-            i = huffVal.get(k);
-            eHufCo[i] = huffCode.get(k);
-            eHufSi[i] = huffSize.get(k);
-            k++;
-        }
+//        int i=0;
+//        int[] eHufCo = new int[256];
+//        int[] eHufSi = new int[256];
+//        for(int i0=0; i0<256; i0++) {eHufCo[i0] = -1; eHufSi[i0] = -1;}
+//        
+//        int k = 0;
+//        while (k < lastK-1) {
+//            i = huffVal.get(k);
+//            eHufCo[i] = huffCode.get(k);
+//            eHufSi[i] = huffSize.get(k);
+//            k++;
+//        }
         
         //TODO: probably eHufCo, eHufSi sizes need to be reduced by throwing away -1 elements
         //This way their size would be equal to huffVal, huffCode and huffSize values
@@ -60,21 +62,21 @@ public class HuffmanTableSpecificationsTransformer {
      * @param hts
      * @return
      */
-    private List<Integer> huffVal(HuffmanTableSpecification hts) {
-        //symbol values to be associated with codes from bits
-        //code length -> number of symbol values
-        Map<Integer, int[]> huffValMap = hts.getVij();
-        
-        //TODO: no need to keep it in a map, just leave it as a list
-        List<Integer> huffVal = new ArrayList<>();
-        for(int i=1; i<=16; i++)
-            if(huffValMap.containsKey(i))
-                for(int hv: huffValMap.get(i)) huffVal.add(hv);
-        
-        return huffVal;
-    }
+//    private List<Integer> huffVal(HuffmanTableSpecification hts) {
+//        //symbol values to be associated with codes from bits
+//        //code length -> number of symbol values
+//        Map<Integer, int[]> huffValMap = hts.getVij();
+//        
+//        //TODO: no need to keep it in a map, just leave it as a list
+//        List<Integer> huffVal = new ArrayList<>();
+//        for(int i=1; i<=16; i++)
+//            if(huffValMap.containsKey(i))
+//                for(int hv: huffValMap.get(i)) huffVal.add(hv);
+//        
+//        return huffVal;
+//    }
     
-    private List<Integer> huffSize(int[] bits) {
+    public List<Integer> huffSize(int[] bits) {
         //////////////////////////////////////////////////////////
         // huffSize list generation
         // Example = [2, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 0]
@@ -104,7 +106,7 @@ public class HuffmanTableSpecificationsTransformer {
         return huffSize;
     }
     
-    private List<Integer> huffCode(List<Integer> huffSize) {
+    public List<Integer> huffCode(List<Integer> huffSize) {
         //////////////////////////////////////////////////////////
         //huffCode list generation
         //each code huffCode[i] has length of huffSize[i] bits
@@ -137,6 +139,52 @@ public class HuffmanTableSpecificationsTransformer {
         }
         
         return huffCode;
+    }
+    
+    public DecodeTables decodeTables(int[] bits, List<Integer> huffCode) {
+        //largest code value for a given length
+        int[] maxCode = new int[16];
+        //smallest code value for a given length
+        int[] minCode = new int[16];
+        //index to the start of the list of values in huffVal, where in valPtr[i] i is word length 
+        int[] valPtr = new int[16];
+        
+        //length of Huffman code. Starts with 1.
+        int i = 0;
+        
+        int j = 0;
+        
+        for(;;) {
+            i++;
+            
+            if(i>16) break;
+            
+            if(bits[i-1] == 0) {
+                maxCode[i-1]--;
+            } else {
+                valPtr[i-1] = j;
+                minCode[i-1] = huffCode.get(j);
+                j = j + bits[i-1] - 1;
+                maxCode[i-1] = huffCode.get(j);
+                j = j + 1;
+            }
+        }
+        
+        return new DecodeTables(maxCode, minCode, valPtr);
+    }
+    
+    public static class DecodeTables {
+        public int[] maxCode;
+        public int[] minCode;
+        public int[] valPtr;
+        
+        public DecodeTables(int[] maxCode, int[] minCode, int[] valPtr) {
+            super();
+            this.maxCode = maxCode;
+            this.minCode = minCode;
+            this.valPtr = valPtr;
+        }
+        
     }
     
 }

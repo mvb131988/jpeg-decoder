@@ -21,10 +21,17 @@ public class RestartIntervalDecoderProcedure {
         
         int[][][][] rows = new int[nY][nX][][];
        
+        NextBitReader nbr = new NextBitReader(br);
+        int numberOfMcu = 1;
         for(int j=0; j<nY; j++)
             for(int i=0; i<nX; i++) {
-                rows[j][i] = dp.decodeMCU(br, dc);
+                if(numberOfMcu == 167) {
+                    System.out.println("breakpoint");
+                }
+                
+                rows[j][i] = dp.decodeMCU(nbr, dc);
                 System.out.println("j = " + j);
+                System.out.println(numberOfMcu++);
             }
     }
     

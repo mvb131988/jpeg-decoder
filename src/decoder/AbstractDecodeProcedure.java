@@ -1,31 +1,34 @@
 package decoder;
 
 import java.io.IOException;
-import java.util.List;
+
+import markers.HuffmanTableSpecificationsTransformer.DecodeTables;
 
 public abstract class AbstractDecodeProcedure {
 
-    public int[] decode(DecodePreProcedureContext c, NextBitReader nbr) throws IOException {
+    public int[] decode(DecodeTables dt, int[] huffVal, NextBitReader nbr) throws IOException {
         //Aliases
         ///////////////////////////////////////////////////////////////////////////////////////////
-        int[] maxCode = c.maxCode;
-        int[] valPtr = c.valPtr;
-        int[] minCode = c.minCode;
-        List<Integer> huffVal = c.huffVal;
+        int[] maxCode = dt.maxCode;
+        int[] valPtr = dt.valPtr;
+        int[] minCode = dt.minCode;
         ///////////////////////////////////////////////////////////////////////////////////////////
         
+        //length of Huffman code. Note maxCode, valPtr, minCode are 0 based arrays, meaning that 
+        //value related to length 1 is located at index 0.
+        //i is length of Huffman code
         int i = 1;
         int code = nbr.nextBit();
         
-        while(code > maxCode[i]) {
+        while(code > maxCode[i-1]) {
             i++;
             code = (code << 1) + nbr.nextBit();
         }
         
-        int j = valPtr[i];
+        int j = valPtr[i-1];
         j = j + code;
-        j -= minCode[i];
-        int t = huffVal.get(j);
+        j -= minCode[i-1];
+        int t = huffVal[j];
         
         int[] tArr = new int[] {t};
         return tArr;
@@ -43,10 +46,15 @@ public abstract class AbstractDecodeProcedure {
         return v;
     }
     
+  //TODO:check coefficient size
     public int extend(int v, int t) {
         int vt = (int) Math.pow(2, t-1);
         while(v<vt) {
-            vt = (-1 << t) + 1;
+            vt = ((-1 << t) + 1);
+            
+            //TODO: check coefficient size
+            //vt = vt & 0xffff;
+            
             v += vt; 
         }
         return v;
