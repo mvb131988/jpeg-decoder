@@ -26,5 +26,13 @@ public class ScanDecoderProcedure {
         //one restart interval is present
         ridp.decodeRestartInterval(br, dc);
     }
+
+    public RestartIntervalDecoderProcedure getRidp() {
+        return ridp;
+    }
+
+    public void setRidp(RestartIntervalDecoderProcedure ridp) {
+        this.ridp = ridp;
+    }
     
 }
