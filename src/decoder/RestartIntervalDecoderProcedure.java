@@ -9,6 +9,10 @@ public class RestartIntervalDecoderProcedure {
     private MCUDecoderProcedure dp = new MCUDecoderProcedure();
     
     public void decodeRestartInterval(BufferedReader br, DecoderContext dc) throws IOException {
+        //Init PRED value of DC coefficient for each component
+        //Preserve components order in scan header
+        dc.initPredDC();
+        
         //TODO: It's assumed that only one restart interval exist,
         //however needs to check on the images with several restart intervals
         
@@ -23,14 +27,17 @@ public class RestartIntervalDecoderProcedure {
        
         NextBitReader nbr = new NextBitReader(br);
         int numberOfMcu = 1;
-        for(int j=0; j<nY; j++)
-            for(int i=0; i<nX; i++) {
-                if(numberOfMcu == 167) {
+          for(int i=0; i<19706; i++) {
+//        for(int j=0; j<nY; j++)
+//            for(int i=0; i<nX; i++) {
+                if(numberOfMcu == 174) {
                     System.out.println("breakpoint");
                 }
                 
-                rows[j][i] = dp.decodeMCU(nbr, dc);
-                System.out.println("j = " + j);
+                dp.decodeMCU(nbr, dc);
+
+//              rows[j][i] = dp.decodeMCU(nbr, dc);
+//              System.out.println("j = " + j);
                 System.out.println(numberOfMcu++);
             }
     }

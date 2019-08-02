@@ -18,6 +18,7 @@ public class MCUDecoderProcedure {
         FrameHeader fh = dc.frameHeader;
         ScanHeader sh = dc.scanHeader;
         List<HuffmanTableSpecification> htsList = dc.htsList;
+        int[] predDCs = dc.predDcs;
         
         //MCU consists of data units from different image components.
         //Sizes contain number of data units in single MCU per image component.
@@ -33,6 +34,8 @@ public class MCUDecoderProcedure {
                 res[resI++] = decodeDataUnit(nbr, 
                                              huffmanTableSelector.select(htsList, 0, sh.Td[i]), 
                                              huffmanTableSelector.select(htsList, 1, sh.Ta[i]));
+                res[resI-1][0] += predDCs[i];
+                predDCs[i] = res[resI-1][0];
                 sizes[i]--;
             }
         
