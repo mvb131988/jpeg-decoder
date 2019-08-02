@@ -46,16 +46,12 @@ public abstract class AbstractDecodeProcedure {
         return v;
     }
     
-  //TODO:check coefficient size
+    //coefficient size is not greater than (t+1) bits
     public int extend(int v, int t) {
-        int vt = (int) Math.pow(2, t-1);
-        while(v<vt) {
+        int vt = (int) Math.pow(2, t - 1);
+        if (v < vt) {
             vt = ((-1 << t) + 1);
-            
-            //TODO: check coefficient size
-            //vt = vt & 0xffff;
-            
-            v += vt; 
+            v += vt;
         }
         return v;
     }

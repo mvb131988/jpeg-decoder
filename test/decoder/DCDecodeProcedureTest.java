@@ -60,4 +60,46 @@ public class DCDecodeProcedureTest {
         assertEquals(7, dc);
     }
     
+    /**
+     * For the given 
+     * Diff = 66, SSSS=7(size of Diff is 7 bits), Huffcode = 126(calculated, corresponds to length 7), 
+     * HuffVal = 7(from input Huffman tables), 
+     *                         
+     * In encoded sequence most significant 8 bits contain Huffcode + least significant 7 bits of Diff.
+     * Decode procedure reads Huffcode(111110) and determines corresponding Huffval of Diff(126 corresponds 
+     * to length of 7). Huffval defines size of Diff(7 bits). Receive reads next 7 bits(Diff itself).
+     * 
+     * Positive Diff are encoded like they are(66 = (1000010)2).
+     * Negative Diff are encoded the following way: 
+     * (1)Diff = Diff - 1
+     * (2)Find Diff twos complement
+     * (3)Write (2) value without sign bit in output
+     * 
+     *                   Huffcode Diff(DC)                  
+     * Encoded sequence: 111110   1000010
+     * 
+     */
+    @Test
+    public void extendPositiveTest() {
+        //Diff
+        int v = 66;
+        //Huffval
+        int t = 7;
+        v = dcDp.extend(v, t);
+        assertEquals(66, v);
+    }
+    
+    /**
+     * See description from extendPositiveTest
+     */
+    @Test
+    public void extendNegativeTest() {
+        //Diff -66 is encoded like 61
+        int v = 61;
+        //Huffval
+        int t = 7;
+        v = dcDp.extend(v, t);
+        assertEquals(-66, v);
+    }
+    
 }

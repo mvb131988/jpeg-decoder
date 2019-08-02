@@ -141,6 +141,18 @@ public class HuffmanTableSpecificationsTransformer {
         return huffCode;
     }
     
+    /**
+     * Generates MINCODE, MAXCODE and VALPTR
+     * 
+     * Consider example: 
+     * bits:     [0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+     * huffVal:  [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+     * huffCode: [0, 2, 3, 4, 5, 6, 14, 30, 62, 126, 254, 510]
+     * 
+     * minCode: [_, 0, 2, 14, 30, 62, 126, 254, 510, _, _, _, _, _, _, _]
+     * maxCode: [_, 0, 6, 14, 30, 62, 126, 254, 510, _, _, _, _, _, _, _]
+     * valPtr:  [_, 0, 1, 6, 7, 8, 9, 10, 11, _, _, _, _, _, _, _]
+     */
     public DecodeTables decodeTables(int[] bits, List<Integer> huffCode) {
         //largest code value for a given length
         int[] maxCode = new int[16];

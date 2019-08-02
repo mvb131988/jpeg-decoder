@@ -7,7 +7,6 @@ import markers.FrameHeader;
 import markers.HuffmanTableSelector;
 import markers.HuffmanTableSpecification;
 import markers.ScanHeader;
-import util.BufferedReader;
 
 public class MCUDecoderProcedure {
 
