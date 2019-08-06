@@ -16,7 +16,7 @@ public class DataUnitDecoderProcedure {
     private ACDecodeProcedure acDp = new ACDecodeProcedure();
     
     //calculate zz
-    public int[] decode(NextBitReader nbr, HuffmanTableSpecification dHt, HuffmanTableSpecification aHt) 
+    public int[][] decode(NextBitReader nbr, HuffmanTableSpecification dHt, HuffmanTableSpecification aHt) 
             throws IOException 
     {
         //Decode DC coefficient
@@ -39,7 +39,63 @@ public class DataUnitDecoderProcedure {
         //set DC coefficient
         zz[0] = val;
         
-        return zz;
+        return inverseZigZag(zz);
+    }
+    
+    public static void main(String[] args) {
+        new DataUnitDecoderProcedure().inverseZigZag(null);
+    }
+    
+    /**
+     * Transforms decoded AC/DC coefficients represented as zig zag sequence into
+     * two dimensional array of quantized samples(samples original position).
+     * 
+     * @param zz
+     * @return
+     */
+    private int[][] inverseZigZag(int[] zz) {
+        int[][] temp = new int[8][8];
+        
+        int i=0, j=0;
+        boolean isUpward = true;
+        
+        for(int k=0; k<64; k++) {
+            temp[i][j] = zz[k];
+            
+            if(!isUpward && j==0 && i!=7) {i++; isUpward=true; continue;}
+            if(!isUpward && i==7) {j++; isUpward=true; continue;}
+            if(!isUpward) {i++; j--; continue;}
+            
+            if(isUpward && j==7) {i++; isUpward=false; continue;}
+            if(isUpward && i==0) {j++; isUpward=false; continue;}
+            if(isUpward) {i--; j++; continue;}
+        }
+        
+        return temp;
+    }
+
+    public HuffmanTableSpecificationsTransformer getHtst() {
+        return htst;
+    }
+
+    public void setHtst(HuffmanTableSpecificationsTransformer htst) {
+        this.htst = htst;
+    }
+
+    public DCDecodeProcedure getDcDp() {
+        return dcDp;
+    }
+
+    public void setDcDp(DCDecodeProcedure dcDp) {
+        this.dcDp = dcDp;
+    }
+
+    public ACDecodeProcedure getAcDp() {
+        return acDp;
+    }
+
+    public void setAcDp(ACDecodeProcedure acDp) {
+        this.acDp = acDp;
     }
     
 }
