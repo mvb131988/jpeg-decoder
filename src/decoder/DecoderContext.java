@@ -5,13 +5,15 @@ import java.util.List;
 
 import markers.FrameHeader;
 import markers.HuffmanTableSpecification;
+import markers.QuantizationTableSpecification;
 import markers.ScanHeader;
 
 public class DecoderContext {
 
     public FrameHeader frameHeader;
     public ScanHeader scanHeader;
-    public List<HuffmanTableSpecification> htsList = new ArrayList<HuffmanTableSpecification>();
+    public List<HuffmanTableSpecification> htsList = new ArrayList<>();
+    public List<QuantizationTableSpecification> qtsList = new ArrayList<>();
     public DimensionsContext dimensionsContext;
     public int[] predDcs;
     

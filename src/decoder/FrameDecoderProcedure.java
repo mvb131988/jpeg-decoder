@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import markers.FrameHeader;
 import markers.HuffmanTableSpecification;
+import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 
 public class FrameDecoderProcedure {
@@ -36,8 +37,12 @@ public class FrameDecoderProcedure {
         int[] marker = new int[2];  marker[0] = br.next(); marker[1] = br.next();
         while(!(marker[0] == 0xff && marker[1] == 0xda) || endOfFile(marker[0], marker[1])) {
             //TODO: interpret markers
+            
             //DHT marker - Huffman tables
             if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.add(decodeHuffmanTable(br));
+            
+            //DQT marker - Quantization tables
+            if(marker[0] == 0xff && marker[1] == 0xdb) dc.qtsList.add(decodeQuantizationTable(br));
             
             marker[0] = marker[1]; marker[1] = br.next();
         }
@@ -59,6 +64,20 @@ public class FrameDecoderProcedure {
         
         HuffmanTableSpecification hts = new HuffmanTableSpecification(htsHeader);
         return hts;
+    }
+    
+    private QuantizationTableSpecification decodeQuantizationTable(BufferedReader br) throws IOException {
+        int[] qtsSize0 = new int[2]; qtsSize0[0] = br.next(); qtsSize0[1] = br.next();
+        int qtsSize = (qtsSize0[0] << 8) + qtsSize0[1];
+        
+        //2 bytes of header marker are not counted in size, but 2 bytes of header size are
+        int[] qtsHeader = new int[qtsSize];
+        qtsHeader[0] = qtsSize0[0];
+        qtsHeader[1] = qtsSize0[1];        
+        for(int i=2; i<qtsSize; i++) qtsHeader[i] = br.next();
+        
+        QuantizationTableSpecification qts = new QuantizationTableSpecification(qtsHeader);
+        return qts;
     }
     
     //TODO: compare with Integer.MIN_VALUE, see BufferedReader for more details

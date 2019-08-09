@@ -19,7 +19,7 @@ public class FrameHeader {
     public int[] Hs;
     //Vertical sampling factor(number of rows in MCUs part of this component)
     public int[] Vs;
-    
+    //Quantization table destination selector 
     public int[] Tqs;
     
     public FrameHeader(int[] header) {

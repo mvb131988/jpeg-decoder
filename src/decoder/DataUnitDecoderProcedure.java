@@ -5,6 +5,7 @@ import java.util.List;
 
 import markers.HuffmanTableSpecification;
 import markers.HuffmanTableSpecificationsTransformer;
+import markers.QuantizationTableSpecification;
 import markers.HuffmanTableSpecificationsTransformer.DecodeTables;
 
 public class DataUnitDecoderProcedure {
@@ -15,9 +16,13 @@ public class DataUnitDecoderProcedure {
     
     private ACDecodeProcedure acDp = new ACDecodeProcedure();
     
+    private DataUnitDequantizationProcedure dudp = new DataUnitDequantizationProcedure();
+    
     //calculate zz
-    public int[][] decode(NextBitReader nbr, HuffmanTableSpecification dHt, HuffmanTableSpecification aHt) 
-            throws IOException 
+    public int[][] decode(NextBitReader nbr, 
+                          HuffmanTableSpecification dHt, 
+                          HuffmanTableSpecification aHt, 
+                          QuantizationTableSpecification qts) throws IOException 
     {
         //Decode DC coefficient
         //number of codes of each size
@@ -39,7 +44,11 @@ public class DataUnitDecoderProcedure {
         //set DC coefficient
         zz[0] = val;
         
-        return inverseZigZag(zz);
+        //zz coefficients in original order
+        int[][] orderedZz = inverseZigZag(zz);
+        dudp.dequantize(orderedZz, inverseZigZag(qts.getQks()));
+        
+        return orderedZz;
     }
     
     public static void main(String[] args) {
@@ -96,6 +105,14 @@ public class DataUnitDecoderProcedure {
 
     public void setAcDp(ACDecodeProcedure acDp) {
         this.acDp = acDp;
+    }
+
+    public DataUnitDequantizationProcedure getDudp() {
+        return dudp;
+    }
+
+    public void setDudp(DataUnitDequantizationProcedure dudp) {
+        this.dudp = dudp;
     }
     
 }

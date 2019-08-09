@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import markers.HuffmanTableSpecification;
+import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 
 /**
@@ -45,8 +46,12 @@ public class DecoderControlProcedure {
         int[] marker = new int[2];  marker[0] = br.next(); marker[1] = br.next();
         while(!(marker[0] == 0xff && marker[1] == 0xc0) || endOfFile(marker[0], marker[1])) {
             //TODO: interpret markers
+            
             //DHT marker - Huffman tables
             if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.add(decodeHuffmanTable());
+            
+            //DQT marker - Quantization tables
+            if(marker[0] == 0xff && marker[1] == 0xdb) dc.qtsList.add(decodeQuantizationTable());
             
             marker[0] = marker[1]; marker[1] = br.next();
         }
@@ -58,7 +63,7 @@ public class DecoderControlProcedure {
         int[] htsSize0 = new int[2]; htsSize0[0] = br.next(); htsSize0[1] = br.next();
         int htsSize = (htsSize0[0] << 8) + htsSize0[1];
         
-        //2 bytes of frame header marker are not counted in frameSize, but 2 bytes of frame header size are
+        //2 bytes of header marker are not counted in size, but 2 bytes of header size are
         int[] htsHeader = new int[htsSize];
         htsHeader[0] = htsSize0[0];
         htsHeader[1] = htsSize0[1];        
@@ -66,6 +71,20 @@ public class DecoderControlProcedure {
         
         HuffmanTableSpecification hts = new HuffmanTableSpecification(htsHeader);
         return hts;
+    }
+    
+    private QuantizationTableSpecification decodeQuantizationTable() throws IOException {
+        int[] qtsSize0 = new int[2]; qtsSize0[0] = br.next(); qtsSize0[1] = br.next();
+        int qtsSize = (qtsSize0[0] << 8) + qtsSize0[1];
+        
+        //2 bytes of header marker are not counted in size, but 2 bytes of header size are
+        int[] qtsHeader = new int[qtsSize];
+        qtsHeader[0] = qtsSize0[0];
+        qtsHeader[1] = qtsSize0[1];        
+        for(int i=2; i<qtsSize; i++) qtsHeader[i] = br.next();
+        
+        QuantizationTableSpecification qts = new QuantizationTableSpecification(qtsHeader);
+        return qts;
     }
     
     //TODO: compare with Integer.MIN_VALUE, see BufferedReader for more details

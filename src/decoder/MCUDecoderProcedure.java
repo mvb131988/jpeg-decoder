@@ -6,6 +6,8 @@ import java.util.List;
 import markers.FrameHeader;
 import markers.HuffmanTableSelector;
 import markers.HuffmanTableSpecification;
+import markers.QuantizationTableSelector;
+import markers.QuantizationTableSpecification;
 import markers.ScanHeader;
 
 public class MCUDecoderProcedure {
@@ -13,6 +15,8 @@ public class MCUDecoderProcedure {
     private HuffmanTableSelector huffmanTableSelector = new HuffmanTableSelector();
     
     private DataUnitDecoderProcedure dataUnitDecoderProcedure = new DataUnitDecoderProcedure();
+    
+    private QuantizationTableSelector quantizationTableSelector = new QuantizationTableSelector();
     
     /**
      * 
@@ -46,6 +50,7 @@ public class MCUDecoderProcedure {
         FrameHeader fh = dc.frameHeader;
         ScanHeader sh = dc.scanHeader;
         List<HuffmanTableSpecification> htsList = dc.htsList;
+        List<QuantizationTableSpecification> qtsList = dc.qtsList;
         int[] predDCs = dc.predDcs;
         
         //MCU consists of data units from different image components.
@@ -61,7 +66,8 @@ public class MCUDecoderProcedure {
             while(sizes[i] > 0) {
                 res[resI++] = decodeDataUnit(nbr, 
                                              huffmanTableSelector.select(htsList, 0, sh.Td[i]), 
-                                             huffmanTableSelector.select(htsList, 1, sh.Ta[i]));
+                                             huffmanTableSelector.select(htsList, 1, sh.Ta[i]),
+                                             quantizationTableSelector.select(qtsList, sh.Td[i]));
                 res[resI-1][0][0] += predDCs[i];
                 predDCs[i] = res[resI-1][0][0];
                 sizes[i]--;
@@ -72,15 +78,18 @@ public class MCUDecoderProcedure {
     
     /**
      * 
-     * @param br 
      * @param dHt - Huffman table for DC coefficients
      * @param aHt - Huffman table for AC coefficients
+     * @param qts 
+     * @param br 
      * @throws IOException 
      */
-    private int[][] decodeDataUnit(NextBitReader nbr, HuffmanTableSpecification dHt, HuffmanTableSpecification aHt) 
-            throws IOException 
+    private int[][] decodeDataUnit(NextBitReader nbr, 
+                                   HuffmanTableSpecification dHt, 
+                                   HuffmanTableSpecification aHt, 
+                                   QuantizationTableSpecification qts) throws IOException 
     {
-        int[][] zz = dataUnitDecoderProcedure.decode(nbr, dHt, aHt);
+        int[][] zz = dataUnitDecoderProcedure.decode(nbr, dHt, aHt, qts);
         return zz;
     }
     
