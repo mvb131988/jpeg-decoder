@@ -2,6 +2,7 @@ package decoder;
 
 import java.io.IOException;
 
+import markers.Image;
 import markers.ScanHeader;
 import util.BufferedReader;
 
@@ -9,7 +10,7 @@ public class ScanDecoderProcedure {
 
     private RestartIntervalDecoderProcedure ridp = new RestartIntervalDecoderProcedure();
     
-    public void decodeScan(BufferedReader br, DecoderContext dc) throws IOException {
+    public Image decodeScan(BufferedReader br, DecoderContext dc) throws IOException {
         int[] ss = new int[2]; ss[0] = br.next(); ss[1] = br.next();
         int scanSize = (ss[0] << 8) + ss[1];
         
@@ -24,7 +25,7 @@ public class ScanDecoderProcedure {
         
         //TODO: could be more than one restart interval, however for the first example only 
         //one restart interval is present
-        ridp.decodeRestartInterval(br, dc);
+        return ridp.decodeRestartInterval(br, dc);
     }
 
     public RestartIntervalDecoderProcedure getRidp() {

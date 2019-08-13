@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import markers.HuffmanTableSpecification;
+import markers.Image;
 import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 
@@ -32,12 +33,14 @@ public class DecoderControlProcedure {
         br = new BufferedReader(is);
     }
     
-    public void decodeImage() throws Exception {
-        decodeImageInternally(new DecoderContext());
+    public Image decodeImage() throws Exception {
+        Image img = decodeImageInternally(new DecoderContext());
         br.close();
+        
+        return img;
     }
     
-    private void decodeImageInternally(DecoderContext dc) throws Exception {
+    private Image decodeImageInternally(DecoderContext dc) throws Exception {
         //read SOI(start of image marker)
         int[] soi = new int[2]; soi[0] = br.next(); soi[1] = br.next();
         if(soi[0] != 0xff && soi[1] != 0xd8) throw new Exception("SOI not found");
@@ -56,7 +59,7 @@ public class DecoderControlProcedure {
             marker[0] = marker[1]; marker[1] = br.next();
         }
         
-        fdp.decodeFrame(br, dc);
+        return fdp.decodeFrame(br, dc);
     }
     
     private HuffmanTableSpecification decodeHuffmanTable() throws IOException {

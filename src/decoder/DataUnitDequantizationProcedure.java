@@ -1,8 +1,50 @@
 package decoder;
 
+import java.io.IOException;
+
+import markers.QuantizationTableSpecification;
 
 public class DataUnitDequantizationProcedure {
 
+    //dequantize zz
+    public int[][] dequantize(int[] zz,
+                              QuantizationTableSpecification qts) throws IOException 
+    {
+        //zz coefficients in original order
+        int[][] orderedZz = inverseZigZag(zz);
+        //dequantized zz
+        int[][] dequantizedZz = dequantize(orderedZz, inverseZigZag(qts.getQks()));
+        return dequantizedZz;
+    }
+    
+    /**
+     * Transforms decoded AC/DC coefficients represented as zig zag sequence into
+     * two dimensional array of quantized samples(samples original position).
+     * 
+     * @param zz
+     * @return
+     */
+    private int[][] inverseZigZag(int[] zz) {
+        int[][] temp = new int[8][8];
+        
+        int i=0, j=0;
+        boolean isUpward = true;
+        
+        for(int k=0; k<64; k++) {
+            temp[i][j] = zz[k];
+            
+            if(!isUpward && j==0 && i!=7) {i++; isUpward=true; continue;}
+            if(!isUpward && i==7) {j++; isUpward=true; continue;}
+            if(!isUpward) {i++; j--; continue;}
+            
+            if(isUpward && j==7) {i++; isUpward=false; continue;}
+            if(isUpward && i==0) {j++; isUpward=false; continue;}
+            if(isUpward) {i--; j++; continue;}
+        }
+        
+        return temp;
+    }
+    
     /**
      * 
      * @param orderedZz
@@ -18,21 +60,27 @@ public class DataUnitDequantizationProcedure {
         
         int[][] samples = new int[8][8];
         
-        System.out.println("================");
+//        System.out.println("================");
         for(int y=0; y<samples.length; y++) {
             for(int x=0; x<samples.length; x++) {
                 //+128 is a level shift for P=8. Only O=8 is implemented
                 samples[y][x] = idct(y,x,orderedZz) + 128;
                 
+                //TODO: write tests, check cases when value of sample <0 or >255
+                if(samples[y][x] < 0) {
+                    System.out.println(samples[y][x]);
+                    samples[y][x] = 0;
+                }
                 if(samples[y][x] > 255) {
-                    System.out.println("debug");
+                    //System.out.println(samples[y][x]);
+                    samples[y][x] = 255;   
                 }
                 
-                System.out.print(samples[y][x] + " ");
+//                System.out.print(samples[y][x] + " ");
             }
-            System.out.println();
+//            System.out.println();
         }
-        System.out.println("================");
+//        System.out.println("================");
         
         return samples;
     }

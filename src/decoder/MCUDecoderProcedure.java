@@ -18,6 +18,8 @@ public class MCUDecoderProcedure {
     
     private QuantizationTableSelector quantizationTableSelector = new QuantizationTableSelector();
     
+    private DataUnitDequantizationProcedure dudp = new DataUnitDequantizationProcedure();
+    
     /**
      * 
      * Returns MCU that looks like(explained by example):
@@ -64,33 +66,28 @@ public class MCUDecoderProcedure {
         int resI = 0;
         for(int i=0; i<sizes.length; i++)
             while(sizes[i] > 0) {
-                res[resI++] = decodeDataUnit(nbr, 
-                                             huffmanTableSelector.select(htsList, 0, sh.Td[i]), 
-                                             huffmanTableSelector.select(htsList, 1, sh.Ta[i]),
-                                             quantizationTableSelector.select(qtsList, sh.Td[i]));
-                res[resI-1][0][0] += predDCs[i];
-                predDCs[i] = res[resI-1][0][0];
+                int[] zz0 = dataUnitDecoderProcedure.decode(nbr, 
+                                                            huffmanTableSelector.select(htsList, 0, sh.Td[i]), 
+                                                            huffmanTableSelector.select(htsList, 1, sh.Ta[i]),
+                                                            quantizationTableSelector.select(qtsList, sh.Td[i]));
+                
+                zz0[0] += predDCs[i];
+                predDCs[i] = zz0[0];
+                
+                res[resI++] = dudp.dequantize(zz0, quantizationTableSelector.select(qtsList, sh.Td[i]));
+
                 sizes[i]--;
             }
         
         return res;
     }
     
-    /**
-     * 
-     * @param dHt - Huffman table for DC coefficients
-     * @param aHt - Huffman table for AC coefficients
-     * @param qts 
-     * @param br 
-     * @throws IOException 
-     */
-    private int[][] decodeDataUnit(NextBitReader nbr, 
-                                   HuffmanTableSpecification dHt, 
-                                   HuffmanTableSpecification aHt, 
-                                   QuantizationTableSpecification qts) throws IOException 
-    {
-        int[][] zz = dataUnitDecoderProcedure.decode(nbr, dHt, aHt, qts);
-        return zz;
+    public DataUnitDequantizationProcedure getDudp() {
+        return dudp;
+    }
+
+    public void setDudp(DataUnitDequantizationProcedure dudp) {
+        this.dudp = dudp;
     }
     
 }

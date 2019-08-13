@@ -16,13 +16,11 @@ public class DataUnitDecoderProcedure {
     
     private ACDecodeProcedure acDp = new ACDecodeProcedure();
     
-    private DataUnitDequantizationProcedure dudp = new DataUnitDequantizationProcedure();
-    
     //calculate zz
-    public int[][] decode(NextBitReader nbr, 
-                          HuffmanTableSpecification dHt, 
-                          HuffmanTableSpecification aHt, 
-                          QuantizationTableSpecification qts) throws IOException 
+    public int[] decode(NextBitReader nbr, 
+                        HuffmanTableSpecification dHt, 
+                        HuffmanTableSpecification aHt, 
+                        QuantizationTableSpecification qts) throws IOException 
     {
         //Decode DC coefficient
         //number of codes of each size
@@ -44,43 +42,7 @@ public class DataUnitDecoderProcedure {
         //set DC coefficient
         zz[0] = val;
         
-        //zz coefficients in original order
-        int[][] orderedZz = inverseZigZag(zz);
-        dudp.dequantize(orderedZz, inverseZigZag(qts.getQks()));
-        
-        return orderedZz;
-    }
-    
-    public static void main(String[] args) {
-        new DataUnitDecoderProcedure().inverseZigZag(null);
-    }
-    
-    /**
-     * Transforms decoded AC/DC coefficients represented as zig zag sequence into
-     * two dimensional array of quantized samples(samples original position).
-     * 
-     * @param zz
-     * @return
-     */
-    private int[][] inverseZigZag(int[] zz) {
-        int[][] temp = new int[8][8];
-        
-        int i=0, j=0;
-        boolean isUpward = true;
-        
-        for(int k=0; k<64; k++) {
-            temp[i][j] = zz[k];
-            
-            if(!isUpward && j==0 && i!=7) {i++; isUpward=true; continue;}
-            if(!isUpward && i==7) {j++; isUpward=true; continue;}
-            if(!isUpward) {i++; j--; continue;}
-            
-            if(isUpward && j==7) {i++; isUpward=false; continue;}
-            if(isUpward && i==0) {j++; isUpward=false; continue;}
-            if(isUpward) {i--; j++; continue;}
-        }
-        
-        return temp;
+        return zz;
     }
 
     public HuffmanTableSpecificationsTransformer getHtst() {
@@ -107,12 +69,4 @@ public class DataUnitDecoderProcedure {
         this.acDp = acDp;
     }
 
-    public DataUnitDequantizationProcedure getDudp() {
-        return dudp;
-    }
-
-    public void setDudp(DataUnitDequantizationProcedure dudp) {
-        this.dudp = dudp;
-    }
-    
 }
