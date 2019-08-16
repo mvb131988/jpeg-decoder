@@ -18,7 +18,7 @@ public class HuffmanTableSpecificationsTransformerTest {
     @Test
     public void testHuffSize() {
         //In this example there are 0 entries for code sizes 1(bits[0] corresponds to size/length 1)
-        //1 entry for size 2, 5 entries for size 3 and so on ans so forth.
+        //1 entry for size 2, 5 entries for size 3 and so on and so forth.
         //output is an array that contains ordered(ascending) code sizes for each code size from the bits(code size is equal 
         //to index+1 of bits. Example i=0 -> code size 1 and number of entries bits[i] = 0).
         //Each code size is repeated exactly the same times as the corresponding number of entries are 

@@ -3,13 +3,13 @@ package markers;
 import java.util.ArrayList;
 import java.util.List;
 
-import decoder.DecodePreProcedureContext;
 import decoder.DecodeProcedureContext;
 
 public class HuffmanTableSpecificationsTransformer {
 
 //    private List<Integer> huffmanCodeSizesTable;
     
+    @Deprecated
     public DecodeProcedureContext transform(HuffmanTableSpecification hts) {
         //number of codes of each size
         int[] bits = hts.getLis();
@@ -46,35 +46,6 @@ public class HuffmanTableSpecificationsTransformer {
         
         return dpc;
     }
-    
-    /**
-     * Values associated with huffman codes. Could be interpreted only together with bits structure.
-     * Example:
-     * bits(from header):    [0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
-     * huffVal(from header): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-     * 
-     * bits[0] = 0 means there is no codes of length 0
-     * bits[1] = 1 means there is one huffVal of length 2 and its value huffVal[0] = 0
-     * bits[2] = 5 means there five huffVal of length 5 and their values are 
-     *             huffVal[1]=1, huffVal[2]=3, huffVal[3]=3, huffVal[4]=4, huffVal[5]=5
-     * Same principle till the end
-     * 
-     * @param hts
-     * @return
-     */
-//    private List<Integer> huffVal(HuffmanTableSpecification hts) {
-//        //symbol values to be associated with codes from bits
-//        //code length -> number of symbol values
-//        Map<Integer, int[]> huffValMap = hts.getVij();
-//        
-//        //TODO: no need to keep it in a map, just leave it as a list
-//        List<Integer> huffVal = new ArrayList<>();
-//        for(int i=1; i<=16; i++)
-//            if(huffValMap.containsKey(i))
-//                for(int hv: huffValMap.get(i)) huffVal.add(hv);
-//        
-//        return huffVal;
-//    }
     
     public List<Integer> huffSize(int[] bits) {
         //////////////////////////////////////////////////////////
@@ -152,6 +123,24 @@ public class HuffmanTableSpecificationsTransformer {
      * minCode: [_, 0, 2, 14, 30, 62, 126, 254, 510, _, _, _, _, _, _, _]
      * maxCode: [_, 0, 6, 14, 30, 62, 126, 254, 510, _, _, _, _, _, _, _]
      * valPtr:  [_, 0, 1, 6, 7, 8, 9, 10, 11, _, _, _, _, _, _, _]
+     * 
+     * ----------------------------------------------------------------------
+     * More details on huffVal structure:
+     * 
+     * Values associated with Huffman codes. Could be interpreted only together with bits structure.
+     * Example:
+     * bits(from header):    [0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0]
+     * huffVal(from header): [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+     * 
+     * bits[0] = 0 means there is no codes of length 0
+     * bits[1] = 1 means there is one huffVal of length 2 and its value huffVal[0] = 0
+     * bits[2] = 5 means there five huffVal of length 3 and their values are 
+     *             huffVal[1]=1, huffVal[2]=3, huffVal[3]=3, huffVal[4]=4, huffVal[5]=5
+     * Same principle till the end
+     * ----------------------------------------------------------------------
+     * 
+     * valPtr value is an index(in huffVal array) to the first huffVal from consecutive elements sequence 
+     * corresponded to Huffman code of length defined by bits structure
      */
     public DecodeTables decodeTables(int[] bits, List<Integer> huffCode) {
         //largest code value for a given length

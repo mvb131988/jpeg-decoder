@@ -1,7 +1,7 @@
 package main;
 
-import debug.ImageInHtmlWriter;
-import debug.ImageInHtmlWriter.Pixel;
+import debug.BmpFileWriter;
+import debug.Pixel;
 import debug.PixelConverter;
 import decoder.DecoderControlProcedure;
 import markers.Image;
@@ -16,8 +16,11 @@ public class Main {
         
         Pixel[][] pixels = new PixelConverter().convert(img);
         
-        ImageInHtmlWriter writer = new ImageInHtmlWriter();
-        writer.create(pixels.length, pixels[0].length, pixels);
+//        ImageInHtmlWriter writer = new ImageInHtmlWriter();
+//        writer.create(pixels.length, pixels[0].length, pixels);
+
+        BmpFileWriter writer = new BmpFileWriter();
+        writer.write(pixels);
         
         System.out.println("img");
     }

@@ -45,8 +45,8 @@ public class ACDecodeProcedure extends AbstractDecodeProcedure {
     }
     
     private int decodeZZk(int SSSS, NextBitReader nbr) throws IOException {
-        int zzK = this.receive(SSSS, nbr);
-        zzK = this.extend(zzK, SSSS);
+        int zzK = receive(SSSS, nbr);
+        zzK = extend(zzK, SSSS);
         return zzK;
     }
     

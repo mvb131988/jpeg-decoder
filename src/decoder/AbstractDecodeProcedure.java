@@ -5,7 +5,20 @@ import java.io.IOException;
 import markers.HuffmanTableSpecificationsTransformer.DecodeTables;
 
 public abstract class AbstractDecodeProcedure {
-
+    
+    /**
+     * Returns number of bits that have to be read next. 
+     * 
+     * For DC coefficient:
+     * These bits represent DC coefficient(more precisely DIFF value without sign extension and 
+     * addition of PRED DC value) 
+     * 
+     * @param dt
+     * @param huffVal
+     * @param nbr
+     * @return
+     * @throws IOException
+     */
     public int[] decode(DecodeTables dt, int[] huffVal, NextBitReader nbr) throws IOException {
         //Aliases
         ///////////////////////////////////////////////////////////////////////////////////////////
@@ -34,6 +47,18 @@ public abstract class AbstractDecodeProcedure {
         return tArr;
     }
     
+    /**
+     * Reads SSSS bits from the input stream. Currently read bit the is the least significant.
+     *
+     * For DC coefficient:
+     * These bits represent DC coefficient(more precisely DIFF value without sign extension and 
+     * addition of PRED DC value)  
+     * 
+     * @param SSSS
+     * @param nbr
+     * @return
+     * @throws IOException
+     */
     public int receive(int SSSS, NextBitReader nbr) throws IOException {
         int i = 0;
         int v = 0;

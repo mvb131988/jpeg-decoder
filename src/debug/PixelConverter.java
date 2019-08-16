@@ -1,6 +1,5 @@
 package debug;
 
-import debug.ImageInHtmlWriter.Pixel;
 import markers.Image;
 
 public class PixelConverter {
