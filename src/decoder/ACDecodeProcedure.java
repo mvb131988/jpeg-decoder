@@ -22,7 +22,7 @@ public class ACDecodeProcedure extends AbstractDecodeProcedure {
         int[] zz = new int[64];
         
         for(;;) {
-            int RS = super.decode(acDt, huffVal, nbr)[0];
+            int RS = decode(acDt, huffVal, nbr)[0];
             int SSSS = RS % 16;
             int RRRR = RS >>> 4;
             int R = RRRR;
