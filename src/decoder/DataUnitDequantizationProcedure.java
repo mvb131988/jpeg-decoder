@@ -48,13 +48,13 @@ public class DataUnitDequantizationProcedure {
     /**
      * 
      * @param orderedZz
-     * @param Qks - quantization coefficients restored from zig zag order to original
+     * @param orderedQks - quantization coefficients restored from zig zag order to original
      * @return TODO
      */
-    public int[][] dequantize(int[][] orderedZz, int[][] Qks) {
+    private int[][] dequantize(int[][] orderedZz, int[][] orderedQks) {
         for(int i=0; i<orderedZz.length; i++) {
             for(int j=0; j<orderedZz[0].length; j++) {
-                orderedZz[i][j] = orderedZz[i][j]*Qks[i][j];
+                orderedZz[i][j] = orderedZz[i][j]*orderedQks[i][j];
             }
         }
         

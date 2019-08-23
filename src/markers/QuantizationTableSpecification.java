@@ -14,6 +14,8 @@ public class QuantizationTableSpecification {
     //Quantization table element in zig zag order
     public int[] Qks;
     
+    public QuantizationTableSpecification() {}
+    
     public QuantizationTableSpecification(int[] header) {
         this.Lq = (header[0] << 8) + header[1];
         
