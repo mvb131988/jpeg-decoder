@@ -38,8 +38,16 @@ public class PixelConverter {
                 int cr = crs[hs[2]*i/Hmax][vs[2]*j/Vmax];
                 
                 int r = (int)(y + 1.402 *(cr-128));
+                if(r>255) r = 255;
+                if(r<0) r = 0;
+                
                 int g = (int)(y - 0.34414*(cb-128) - 0.71414*(cr-128));
+                if(g>255) g = 255;
+                if(g<0) g = 0;
+                
                 int b = (int)(y + 1.772*(cb-128));
+                if(b>255) b = 255;
+                if(b<0) b = 0;
                 
                 rgbImage[i][j] = new Pixel(r,g,b);
             }
