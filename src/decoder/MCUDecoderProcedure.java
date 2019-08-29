@@ -57,7 +57,7 @@ public class MCUDecoderProcedure {
         
         //MCU consists of data units from different image components.
         //Sizes contain number of data units in single MCU per image component.
-        int[] sizes = new int[fh.Cs.length];
+        int[] sizes = new int[fh.Nf];
         //number of data units in the MCU
         int Nb = 0;
         for (int i = 0; i < sizes.length; i++) {sizes[i] = fh.Vs[i] * fh.Hs[i]; Nb += sizes[i];}
@@ -88,6 +88,14 @@ public class MCUDecoderProcedure {
 
     public void setDudp(DataUnitDequantizationProcedure dudp) {
         this.dudp = dudp;
+    }
+
+    public DataUnitDecoderProcedure getDataUnitDecoderProcedure() {
+        return dataUnitDecoderProcedure;
+    }
+
+    public void setDataUnitDecoderProcedure(DataUnitDecoderProcedure dataUnitDecoderProcedure) {
+        this.dataUnitDecoderProcedure = dataUnitDecoderProcedure;
     }
     
 }

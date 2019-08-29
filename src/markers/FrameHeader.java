@@ -48,6 +48,10 @@ public class FrameHeader {
         }
     }
     
+    public FrameHeader() {
+        
+    }
+    
     public void print() {
         System.out.println("============= frame header =============");
         System.out.println("sofN : " + sofN + "(" +  Integer.toHexString((sofN & 0xff00) >> 8) + "" + Integer.toHexString(sofN & 0xff)  + ")");

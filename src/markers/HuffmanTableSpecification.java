@@ -60,6 +60,10 @@ public class HuffmanTableSpecification {
         }
     }
 
+    public HuffmanTableSpecification() {
+        
+    }
+    
     public int[] getLis() {
         return lis;
     }

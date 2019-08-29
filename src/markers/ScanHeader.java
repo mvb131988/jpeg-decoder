@@ -52,6 +52,10 @@ public class ScanHeader {
         Al = (header[pos+2] & 0xF0) >> 4;
     }
     
+    public ScanHeader() {
+        
+    }
+    
     public static ScanHeader checkAndBuild(int[] header) {
         if(header[1] == 0xda) return new ScanHeader(header);
         return null;
