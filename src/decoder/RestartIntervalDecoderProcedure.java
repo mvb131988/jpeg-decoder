@@ -108,30 +108,30 @@ public class RestartIntervalDecoderProcedure {
     private static class ComponentAssembler {
         
         //data units number in a row
-        int extXDataUnit;
+        private int extXDataUnit;
         
         //data units number in a column
-        int extYDataUnit;
+        private int extYDataUnit;
         
         //number of samples in a row
-        int xs;
+        private int xs;
         
         //number of samples in a column
-        int ys;
+        private int ys;
         
         //two dimensional array of component's samples 
-        int[][] samples;
+        private int[][] samples;
         
         //horizontal sampling factor(number of columns in MCUs part of this component)
-        int hs;
+        private int hs;
         
         //vertical sampling factor(number of rows in MCUs part of this component)
-        int vs;
+        private int vs;
         
         //current position
         //position in number of samples relative to the most top left corner
-        int rowPos;
-        int columnPos;
+        private int rowPos;
+        private int columnPos;
         
         //There are hs*vs data units(lets call this region) of this specific component in the MCU, hs columns 
         //and vs rows.
@@ -153,8 +153,8 @@ public class RestartIntervalDecoderProcedure {
         //                                   columnStart = columnStart + duColumnNumber*8 = 0 + 0 = 0   
         //For the forth du from the region   rowStart = rowPos + duRowNumber*8 = 0 + 1*8 = 8
         //                                   columnStart = columnStart + duColumnNumber*8 = 0 + 1*8 = 8
-        int duColumnNumber;
-        int duRowNumber;
+        private int duColumnNumber;
+        private int duRowNumber;
         
         public ComponentAssembler(int extXDataUnit, int extYDataUnit, int xs, int ys, int hs, int vs) {
             this.extXDataUnit = extXDataUnit;
@@ -202,6 +202,14 @@ public class RestartIntervalDecoderProcedure {
                     samples[i][j] = du[i0][j0];
         }
         
+    }
+
+    public MCUDecoderProcedure getDp() {
+        return dp;
+    }
+
+    public void setDp(MCUDecoderProcedure dp) {
+        this.dp = dp;
     }
     
 }
