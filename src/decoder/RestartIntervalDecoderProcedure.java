@@ -61,10 +61,10 @@ public class RestartIntervalDecoderProcedure {
         int[] extXDataUnit = dc.dimensionsContext.extXDataUnit;
         //number of data units in a column per component
         int[] extYDataUnit = dc.dimensionsContext.extYDataUnit;
-        //number of samples in a row per component 
-        int[] xs = dc.dimensionsContext.finalExtXs;
-        //number of samples in a column per component
-        int[] ys = dc.dimensionsContext.finalExtYs;
+        //original(no extensions) number of samples in a row per component 
+        int[] xs = dc.dimensionsContext.Xs;
+        //original(no extensions) number of samples in a column per component
+        int[] ys = dc.dimensionsContext.Ys;
         
         ComponentAssembler[] cas = new ComponentAssembler[nComponents];
         for(int i=0; i<nComponents; i++) cas[i] = new ComponentAssembler(extXDataUnit[i], 
@@ -171,6 +171,13 @@ public class RestartIntervalDecoderProcedure {
             this.duColumnNumber = 0;
         }
         
+        /**
+         * Adds data unit(8x8 block of samples) to the resulting samples two dimensional array
+         * relative to the insertion point(coordinates relative to 0,0 sample that gives staring point
+         * of insertion)
+         * 
+         * @param du
+         */
         public void add(int[][] du) {
             addInternally(rowPos + duRowNumber * 8, columnPos + duColumnNumber * 8, du);
             
@@ -184,13 +191,9 @@ public class RestartIntervalDecoderProcedure {
                     this.columnPos += 8*hs;
                     
                     //when end of line is reached, move to the next row
-                    if(this.columnPos == xs) {
+                    if(this.columnPos >= xs) {
                         this.columnPos = 0;
                         this.rowPos += 8*vs; 
-                        
-                        if(rowPos == 1888) {
-                            System.out.println("debug");
-                        }
                     }
                 }
             }
@@ -199,7 +202,10 @@ public class RestartIntervalDecoderProcedure {
         private void addInternally(int y, int x, int[][]du) {
             for (int i = y, i0 = 0; i < y + 8; i++, i0++)
                 for (int j = x, j0 = 0; j < x + 8; j++, j0++)
-                    samples[i][j] = du[i0][j0];
+                    //eliminates padding samples(either of uncompleted data unit(most right or bottom)
+                    //or padding data units)
+                    if(i<ys && j<xs) 
+                        samples[i][j] = du[i0][j0];
         }
         
     }
