@@ -31,17 +31,9 @@ public class RestartIntervalDecoderProcedure {
         int[][][][] mcus = new int [numberOfMcu][][][];
         
         NextBitReader nbr = new NextBitReader(br);
-        int iMcu = 1;
         for (int i = 0; i < mcus.length; i++) {
-//            if(i==200) {
-//                System.out.println("debug");
-//            }
-            
             mcus[i] = dp.decodeMCU(nbr, dc);
-//            System.out.println(iMcu++);
         }
-        
-        System.out.println("=== END OF READ ===");
         
         int[][][] samples = flattenMCUs(mcus, dc);
         
@@ -49,27 +41,24 @@ public class RestartIntervalDecoderProcedure {
     }
     
     /**
+     * Reorganizes MCU into regular two dimensional array(for 3 component image each two dimensional array
+     * contains values that are part of Y,Cb, Cr representation). These values now are deployed in
+     * correct positions(index of each sample/partial value of a pixel in two dimensional array of the
+     * largest image component corresponds to coordinates of the pixel in output bitmap image) 
      * 
-     * 
-     * @return
+     * @return components(3 components) as two dimensional arrays
      */
     private int[][][] flattenMCUs(int[][][][] mcus, DecoderContext dc) {
         
         //number of components
         int nComponents = dc.frameHeader.Nf;   
-        //number of data units in a row per component
-        int[] extXDataUnit = dc.dimensionsContext.extXDataUnit;
-        //number of data units in a column per component
-        int[] extYDataUnit = dc.dimensionsContext.extYDataUnit;
         //original(no extensions) number of samples in a row per component 
         int[] xs = dc.dimensionsContext.Xs;
         //original(no extensions) number of samples in a column per component
         int[] ys = dc.dimensionsContext.Ys;
         
         ComponentAssembler[] cas = new ComponentAssembler[nComponents];
-        for(int i=0; i<nComponents; i++) cas[i] = new ComponentAssembler(extXDataUnit[i], 
-                                                                         extYDataUnit[i], 
-                                                                         xs[i], 
+        for(int i=0; i<nComponents; i++) cas[i] = new ComponentAssembler(xs[i], 
                                                                          ys[i],
                                                                          dc.frameHeader.Hs[i],
                                                                          dc.frameHeader.Vs[i]);
@@ -95,23 +84,9 @@ public class RestartIntervalDecoderProcedure {
         for(int i=0; i<nComponents; i++) samples[i] = cas[i].samples;
         
         return samples;
-        
-        //TODO: Initialize ComponentBuilder for each component(set height, width in samples, height and 
-        //width in data units per MCU)
-        
-        //disassemble each MCU in separate data units and pass data unit of i-s component to ComponentBuilder
-        //of i-th component.
-        
-        //Disassembling of data units into samples and pixels allocation is done inside ComponentBuilder
     } 
     
     private static class ComponentAssembler {
-        
-        //data units number in a row
-        private int extXDataUnit;
-        
-        //data units number in a column
-        private int extYDataUnit;
         
         //number of samples in a row
         private int xs;
@@ -156,9 +131,7 @@ public class RestartIntervalDecoderProcedure {
         private int duColumnNumber;
         private int duRowNumber;
         
-        public ComponentAssembler(int extXDataUnit, int extYDataUnit, int xs, int ys, int hs, int vs) {
-            this.extXDataUnit = extXDataUnit;
-            this.extYDataUnit = extYDataUnit;
+        public ComponentAssembler(int xs, int ys, int hs, int vs) {
             this.xs = xs;
             this.ys = ys;
             this.hs = hs;
@@ -175,6 +148,18 @@ public class RestartIntervalDecoderProcedure {
          * Adds data unit(8x8 block of samples) to the resulting samples two dimensional array
          * relative to the insertion point(coordinates relative to 0,0 sample that gives staring point
          * of insertion)
+         * 
+         * Note: Method eliminates padding samples and padding data units. 
+         *       Here two cases are possible: 
+         *       (1) Some of the samples from most right and most left du are used for padding. Procedure
+         *           of du traversing within MCU doesn't change, just some of the samples are ignored
+         *       (2) The entire du within MCU is used for padding. Similar to 1 all samples from this
+         *           du are ignored, but what is the most important there are no more MCUs to the right or
+         *           to the bottom(that if they existed shoud've been entirely from padding samples, would
+         *           've been ignored by condition this.columnPos >= xs and would've considered as first 
+         *           MCU starting from the new row). There are no MCU's to the right or bottom because it is padded
+         *           to be multiple of horizontal or vertical scaling factor and hence number of padded
+         *           du's is not greater than number of du's in a row or column in a regular MCU.    
          * 
          * @param du
          */
