@@ -42,8 +42,8 @@ public class FrameHeader {
             int b3 = header[start + 10 + 3*i];
             
             Cs[i] = b1;
-            Hs[i] = b2 & 0x0F;
-            Vs[i] = (b2 & 0xF0) >> 4;
+            Hs[i] = (b2 & 0xF0) >> 4; 
+            Vs[i] = b2 & 0x0F;
             Tqs[i] = b3;
         }
     }

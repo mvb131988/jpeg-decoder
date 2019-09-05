@@ -33,9 +33,9 @@ public class PixelConverter {
             for(int j=0; j<width; j++) {
                 // i = hs[k]*i/Hmax 
                 // j = vs[k]*j/Vmax
-                int y = ys[hs[0]*i/Hmax][vs[0]*j/Vmax]; 
-                int cb = cbs[hs[1]*i/Hmax][vs[1]*j/Vmax]; 
-                int cr = crs[hs[2]*i/Hmax][vs[2]*j/Vmax];
+                int y = ys[vs[0]*i/Vmax][hs[0]*j/Hmax]; 
+                int cb = cbs[vs[1]*i/Vmax][hs[1]*j/Hmax]; 
+                int cr = crs[vs[2]*i/Vmax][hs[2]*j/Hmax];
                 
                 int r = (int)(y + 1.402 *(cr-128));
                 if(r>255) r = 255;
