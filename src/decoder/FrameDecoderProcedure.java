@@ -14,6 +14,8 @@ public class FrameDecoderProcedure {
     
     private DimensionsCalculator dimensionsCalculator = new DimensionsCalculator();
     
+    private HeadersDecoder hd = new HeadersDecoder();
+    
     /**
      * 
      * @param br - is set to the first frame header bit(frame header marker already processed) 
@@ -38,6 +40,11 @@ public class FrameDecoderProcedure {
         int[] marker = new int[2];  marker[0] = br.next(); marker[1] = br.next();
         while(!(marker[0] == 0xff && marker[1] == 0xda) || endOfFile(marker[0], marker[1])) {
             //TODO: interpret markers
+            
+            if(hd.isAppMarker(marker)) hd.skipAppMarker(br);
+            
+            //DRI - restart interval
+            if(hd.isRestartIntervalMarker(marker)) dc.restartInterval = hd.restartInterval(br);
             
             //DHT marker - Huffman tables
             if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.add(decodeHuffmanTable(br));

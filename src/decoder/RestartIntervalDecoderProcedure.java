@@ -15,6 +15,8 @@ public class RestartIntervalDecoderProcedure {
         //Preserve components order in scan header
         dc.initPredDC();
         
+        //TODO: Hs and Vs are at a wrong place, swap them
+        
         //TODO: It's assumed that only one restart interval exist,
         //however needs to check on the images with several restart intervals
         

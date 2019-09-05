@@ -12,6 +12,13 @@ import markers.Image;
 import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 
+//TODO: Need to check:
+//      1 Jpeg type - only DCT base is supported
+//      2 pixel size - only 8 bit is supported 
+//      3 no DNL Number of lines must be greater than 0
+
+//Eliminate all FFE0 through FFEF
+
 /**
  * Entry point for the decoding process
  */
@@ -19,6 +26,8 @@ public class DecoderControlProcedure {
 
     //source(jpeg) image reader
     private BufferedReader br;
+    
+    private HeadersDecoder hd = new HeadersDecoder();
     
     private FrameDecoderProcedure fdp = new FrameDecoderProcedure();
     
@@ -49,6 +58,11 @@ public class DecoderControlProcedure {
         int[] marker = new int[2];  marker[0] = br.next(); marker[1] = br.next();
         while(!(marker[0] == 0xff && marker[1] == 0xc0) || endOfFile(marker[0], marker[1])) {
             //TODO: interpret markers
+            
+            if(hd.isAppMarker(marker)) hd.skipAppMarker(br);
+            
+            //DRI - restart interval
+            if(hd.isRestartIntervalMarker(marker)) dc.restartInterval = hd.restartInterval(br);
             
             //DHT marker - Huffman tables
             if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.add(decodeHuffmanTable());
