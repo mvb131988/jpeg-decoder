@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 import markers.HuffmanTableSpecification;
 import markers.Image;
@@ -30,6 +31,10 @@ public class DecoderControlProcedure {
     private HeadersDecoder hd = new HeadersDecoder();
     
     private FrameDecoderProcedure fdp = new FrameDecoderProcedure();
+    
+    private HuffmanTableSpecificationDecoderProcedure htsdp = new HuffmanTableSpecificationDecoderProcedure();
+    
+	private QuantizationTableSpecificationDecoderProcedure qtsdp = new QuantizationTableSpecificationDecoderProcedure();
     
     /**
      * 
@@ -65,10 +70,10 @@ public class DecoderControlProcedure {
             if(hd.isRestartIntervalMarker(marker)) dc.restartInterval = hd.restartInterval(br);
             
             //DHT marker - Huffman tables
-            if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.add(decodeHuffmanTable());
+            if(marker[0] == 0xff && marker[1] == 0xc4) dc.htsList.addAll(decodeHuffmanTable());
             
             //DQT marker - Quantization tables
-            if(marker[0] == 0xff && marker[1] == 0xdb) dc.qtsList.add(decodeQuantizationTable());
+            if(marker[0] == 0xff && marker[1] == 0xdb) dc.qtsList.addAll(decodeQuantizationTable());
             
             marker[0] = marker[1]; marker[1] = br.next();
         }
@@ -76,7 +81,7 @@ public class DecoderControlProcedure {
         return fdp.decodeFrame(br, dc);
     }
     
-    private HuffmanTableSpecification decodeHuffmanTable() throws IOException {
+    private List<HuffmanTableSpecification> decodeHuffmanTable() throws IOException {
         int[] htsSize0 = new int[2]; htsSize0[0] = br.next(); htsSize0[1] = br.next();
         int htsSize = (htsSize0[0] << 8) + htsSize0[1];
         
@@ -86,11 +91,11 @@ public class DecoderControlProcedure {
         htsHeader[1] = htsSize0[1];        
         for(int i=2; i<htsSize; i++) htsHeader[i] = br.next();
         
-        HuffmanTableSpecification hts = new HuffmanTableSpecification(htsHeader);
-        return hts;
+        List<HuffmanTableSpecification> htsList = htsdp.decode(htsHeader);
+        return htsList;
     }
     
-    private QuantizationTableSpecification decodeQuantizationTable() throws IOException {
+    private List<QuantizationTableSpecification> decodeQuantizationTable() throws IOException {
         int[] qtsSize0 = new int[2]; qtsSize0[0] = br.next(); qtsSize0[1] = br.next();
         int qtsSize = (qtsSize0[0] << 8) + qtsSize0[1];
         
@@ -100,8 +105,8 @@ public class DecoderControlProcedure {
         qtsHeader[1] = qtsSize0[1];        
         for(int i=2; i<qtsSize; i++) qtsHeader[i] = br.next();
         
-        QuantizationTableSpecification qts = new QuantizationTableSpecification(qtsHeader);
-        return qts;
+        List<QuantizationTableSpecification> qtsList = qtsdp.decode(qtsHeader);
+        return qtsList;
     }
     
     //TODO: compare with Integer.MIN_VALUE, see BufferedReader for more details

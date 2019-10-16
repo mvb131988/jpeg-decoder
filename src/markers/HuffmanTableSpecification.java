@@ -2,12 +2,6 @@ package markers;
 
 public class HuffmanTableSpecification {
 
-    private int[] header;
-    
-    //Huffman table definition length
-    //Most significant byte first
-    public int lh;
-    
     // Table class – 0 = DC table or lossless table, 1 = AC table
     // Most significant 4 bits of the byte
     public int tc;
@@ -38,27 +32,13 @@ public class HuffmanTableSpecification {
     //is initialized)
     public int[] vij = null;
     
-    public HuffmanTableSpecification(int[] header) {
-        this.header = header;
-        
-        int pos = 0;
-        lh = (header[pos] << 8) + header[pos+1];
-        pos+=2;
-        
-        tc = (header[pos] & 0x0F0)>>4;
-        th = header[pos] & 0x0F;
-        pos++;
-        
-        for(int i0=0, i=pos; i<pos+16; i++, i0++) {
-            lis[i0] = header[i];
-        }
-        pos += 16;
-        
-        vij = new int[lh-pos];
-        for(int i=pos, i0=0; i<lh; i++,i0++) {
-            vij[i0] = header[i];
-        }
-    }
+    public HuffmanTableSpecification(int tc, int th, int[] lis, int[] vij) {
+		super();
+		this.tc = tc;
+		this.th = th;
+		this.lis = lis;
+		this.vij = vij;
+	}
 
     public HuffmanTableSpecification() {
         
