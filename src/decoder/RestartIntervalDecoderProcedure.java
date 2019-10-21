@@ -33,10 +33,34 @@ public class RestartIntervalDecoderProcedure {
         int[][][][] mcus = new int [numberOfMcu][][][];
         
         NextBitReader nbr = new NextBitReader(br);
-        for (int i = 0; i < mcus.length; i++) {
-            mcus[i] = dp.decodeMCU(nbr, dc);
+        int i = 0;
+        while (i < mcus.length) {
+        	//check restart interval marker
+        	int b1 = br.next();
+        	int b2 = br.next();
+        	
+        	if(!(b1 == 0xff && (b2 == 0xd0 || 
+        						b2 == 0xd1 || 
+        						b2 == 0xd2 || 
+        						b2 == 0xd3 || 
+        						b2 == 0xd4 || 
+        						b2 == 0xd5 || 
+        						b2 == 0xd6 ||
+        						b2 == 0xd7))) {
+        		br.pushBack(b1);
+        		br.pushBack(b2);
+        	
+        		mcus[i++] = dp.decodeMCU(nbr, dc);
+        	} else {
+        		// refresh actions when restart marker is met 
+        		dc.initPredDC();
+        		nbr = new NextBitReader(br);
+        	}
         }
         
+        //TODO:
+        // move flatten logic to a separate class
+        // handle restart interval(definition marker) marker
         int[][][] samples = flattenMCUs(mcus, dc);
         
         return new Image(samples, dc.frameHeader.Hs, dc.frameHeader.Vs); 
@@ -44,7 +68,7 @@ public class RestartIntervalDecoderProcedure {
     
     /**
      * Reorganizes MCU into regular two dimensional array(for 3 component image each two dimensional array
-     * contains values that are part of Y,Cb, Cr representation). These values now are deployed in
+     * contains values that are part of Y,Cb, Cr representation). These values now are set into
      * correct positions(index of each sample/partial value of a pixel in two dimensional array of the
      * largest image component corresponds to coordinates of the pixel in output bitmap image) 
      * 
@@ -79,6 +103,7 @@ public class RestartIntervalDecoderProcedure {
                     cas[i].add(mcus[mcuI][duI++]);
                     sizes[i]--;
                 }
+            System.out.println("MCU: " + mcuI + " is processed");
         }
         
         int[][][] samples = new int[nComponents][][];
@@ -106,7 +131,7 @@ public class RestartIntervalDecoderProcedure {
         private int vs;
         
         //current position
-        //position in number of samples relative to the most top left corner
+        //position in number of samples relative to the top most left most corner
         private int rowPos;
         private int columnPos;
         
@@ -118,7 +143,7 @@ public class RestartIntervalDecoderProcedure {
         //3'd  du has neighbor 1 to the top and 4 to the right
         //4'th du has neighbor 2 to the top and 3 to the left
         //
-        //Samples from du would be placed into final samples array according to rowPos and columnPos(staring point for 
+        //Samples from du would be placed into final samples array according to rowPos and columnPos(starting point for 
         //the current region) and duColumnNumber, duRowNumber
         //
         //Example:
@@ -153,8 +178,9 @@ public class RestartIntervalDecoderProcedure {
          * 
          * Note: Method eliminates padding samples and padding data units. 
          *       Here two cases are possible: 
-         *       (1) Some of the samples from most right and most left du are used for padding. Procedure
-         *           of du traversing within MCU doesn't change, just some of the samples are ignored
+         *       (1) Some of the samples from most right and most bottom du are used for padding. Procedure
+         *           of du traversing within MCU remains the same as for any regular MCU, 
+         *           just some of the samples within it are ignored
          *       (2) The entire du within MCU is used for padding. Similar to 1 all samples from this
          *           du are ignored, but what is the most important there are no more MCUs to the right or
          *           to the bottom(that if they existed shoud've been entirely from padding samples, would
