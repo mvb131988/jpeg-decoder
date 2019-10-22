@@ -1,4 +1,4 @@
-package debug;
+package persister;
 
 import markers.Image;
 
@@ -53,6 +53,30 @@ public class PixelConverter {
             }
         
         return rgbImage;
+    }
+    
+    public Pixel[][] scale(Pixel[][] pixels0) {
+        int width0 = pixels0[0].length;
+        int height0 = pixels0.length;
+        
+        int scale = calculateScale(width0, height0);
+        int width = (int)width0/scale;
+        int height = (int)height0/scale;
+        Pixel[][] pixels = new Pixel[height][width];
+        
+        for(int i=0; i<height; i++) {
+            for(int j=0; j<width; j++) {
+                pixels[i][j] = pixels0[i*scale][j*scale];
+            }
+        }
+        
+        return pixels;
+    }
+    
+    private int calculateScale(int width, int height) {
+    	int widthScale = width/200;
+    	int heightScale = height/200;
+    	return Math.max(widthScale, heightScale);
     }
     
 }

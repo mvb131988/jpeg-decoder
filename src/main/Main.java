@@ -1,26 +1,39 @@
 package main;
 
-import debug.BmpFileWriter;
-import debug.Pixel;
-import debug.PixelConverter;
+import java.nio.file.Paths;
+
 import decoder.DecoderControlProcedure;
 import markers.Image;
+import persister.BmpFileWriter;
+import persister.Pixel;
+import persister.PixelConverter;
 
 //https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 //https://www.ece.ucdavis.edu/cerl/reliablejpeg/compression/
 public class Main {
     
     public static void main(String[] args) throws Exception {
-        DecoderControlProcedure dcp = new DecoderControlProcedure("browny.jpg");
+    	//TODO: Move to property file
+    	
+    	//sets the root of the file system, that will be scanned for jpeg images
+    	String inputPath = "C:\\endava\\workspace\\jpeg-decoder";
+    	//sets the root of the file system, that will persist bmp images(the result
+    	//of jpeg transformation, found in inputPath)
+    	String outputPath = "C:\\endava\\workspace\\jpeg-decoder\\output";
+    	//output(bmp) file name
+    	String fileName = "bmp_img_out.bmp";
+    	
+        DecoderControlProcedure dcp = new DecoderControlProcedure("IMG_20190828_201042.jpg");
         Image img = dcp.decodeImage();
         
-        Pixel[][] pixels = new PixelConverter().convert(img);
+        PixelConverter pc = new PixelConverter(); 
+        Pixel[][] pixels = pc.scale(pc.convert(img));
         
-//        ImageInHtmlWriter writer = new ImageInHtmlWriter();
-//        writer.create(pixels.length, pixels[0].length, pixels);
+//        BmpInHtmlWriter writer = new BmpInHtmlWriter();
+//        writer.create(pixels);
 
-        BmpFileWriter writer = new BmpFileWriter();
-        writer.write(pixels);
+        BmpFileWriter bfw = new BmpFileWriter();
+        bfw.write(Paths.get(outputPath), Paths.get(""), Paths.get(fileName), pixels);
         
         System.out.println("img");
     }

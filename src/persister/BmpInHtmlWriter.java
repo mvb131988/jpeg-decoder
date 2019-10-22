@@ -1,12 +1,19 @@
-package debug;
+package persister;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class ImageInHtmlWriter {
+/**
+ * For debug purpose only.
+ * Outputs bmp two dimensional array of pixels into html format,
+ * avoiding creation of bmp header. 
+ */
+public class BmpInHtmlWriter {
 
-    public void create(long height, long width, Pixel[][] pixels) throws FileNotFoundException {
-        StringBuilder text = new StringBuilder();
+    public void create(Pixel[][] pixels) throws FileNotFoundException {
+    	long height = pixels.length;
+    	long width = pixels[0].length;
+    	StringBuilder text = new StringBuilder();
         
         text.append("<html>"); 
         text.append("<body>");

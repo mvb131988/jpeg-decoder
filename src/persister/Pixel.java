@@ -1,4 +1,4 @@
-package debug;
+package persister;
 
 public class Pixel {
     public int r;
