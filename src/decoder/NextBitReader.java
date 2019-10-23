@@ -20,9 +20,6 @@ public class NextBitReader {
     
     private static List<Integer> byteLog = new ArrayList<>();
     
-    //saves each bit that went in the output
-    private static List<Integer> log = new ArrayList<Integer>();
-    
     public NextBitReader(BufferedReader br) {
         this.br = br;
         this.cnt = 0;
@@ -58,17 +55,7 @@ public class NextBitReader {
         cnt--;
         b = (b << 1) & 0xff;
         
-        log.add(bit);
-        //System.out.print(bit);
         return bit; 
-    }
-    
-    public void outputLog() {
-        System.out.println("===== Bit reader log =====");
-        log.stream().forEach(e->System.out.print(e));
-        System.out.println();
-        byteLog.stream().forEach(e->System.out.println(Integer.toHexString(e)));
-        System.out.println("===== Bit reader log end =====");
     }
     
 }

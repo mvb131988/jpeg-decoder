@@ -23,6 +23,8 @@ public class Main {
     	//output(bmp) file name
     	String fileName = "bmp_img_out.bmp";
     	
+    	new BmpFileWriter().writeAll(Paths.get(inputPath), Paths.get(outputPath));
+    	
         DecoderControlProcedure dcp = new DecoderControlProcedure("IMG_20190828_201042.jpg");
         Image img = dcp.decodeImage();
         

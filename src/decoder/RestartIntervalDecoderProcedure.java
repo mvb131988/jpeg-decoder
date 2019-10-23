@@ -103,7 +103,7 @@ public class RestartIntervalDecoderProcedure {
                     cas[i].add(mcus[mcuI][duI++]);
                     sizes[i]--;
                 }
-            System.out.println("MCU: " + mcuI + " is processed");
+            //System.out.println("MCU: " + mcuI + " is processed");
         }
         
         int[][][] samples = new int[nComponents][][];
