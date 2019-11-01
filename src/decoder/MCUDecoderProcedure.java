@@ -3,7 +3,6 @@ package decoder;
 import java.io.IOException;
 import java.util.List;
 
-import markers.FrameHeader;
 import markers.HuffmanTableSelector;
 import markers.HuffmanTableSpecification;
 import markers.QuantizationTableSelector;
@@ -45,11 +44,11 @@ public class MCUDecoderProcedure {
      * 
      * @param nbr
      * @param dc
+     * @param dc - storage for the extracting MCU
      * @return
      * @throws IOException
      */
-    public int[][][] decodeMCU(NextBitReader nbr, DecoderContext dc) throws IOException {
-        FrameHeader fh = dc.frameHeader;
+    public int[][][] decodeMCU(NextBitReader nbr, DecoderContext dc, MCUCalculationDataHolder holder) throws IOException {
         ScanHeader sh = dc.scanHeader;
         List<HuffmanTableSpecification> htsList = dc.htsList;
         List<QuantizationTableSpecification> qtsList = dc.qtsList;
@@ -57,25 +56,28 @@ public class MCUDecoderProcedure {
         
         //MCU consists of data units from different image components.
         //Sizes contain number of data units in single MCU per image component.
-        int[] sizes = new int[fh.Nf];
-        //number of data units in the MCU
-        int Nb = 0;
-        for (int i = 0; i < sizes.length; i++) {sizes[i] = fh.Vs[i] * fh.Hs[i]; Nb += sizes[i];}
+        int[] sizes = dc.mcuComponentsSize();
         
-        int[][][] res = new int[Nb][][];
+        int[][][] res = holder.mcu;
         int resI = 0;
         for(int i=0; i<sizes.length; i++)
             while(sizes[i] > 0) {
                 int[] zz0 = dataUnitDecoderProcedure.decode(nbr, 
                                                             huffmanTableSelector.select(htsList, 0, sh.Td[i]), 
                                                             huffmanTableSelector.select(htsList, 1, sh.Ta[i]),
-                                                            quantizationTableSelector.select(qtsList, sh.Td[i]));
+                                                            quantizationTableSelector.select(qtsList, sh.Td[i]),
+                                                            holder);
                 
                 zz0[0] += predDCs[i];
                 predDCs[i] = zz0[0];
                 
-                res[resI++] = dudp.dequantize(zz0, quantizationTableSelector.select(qtsList, sh.Td[i]), dudp::idctHigh);
+//                res[resI] = dudp.dequantize(zz0, 
+//                							quantizationTableSelector.select(qtsList, sh.Td[i]), 
+//                							dudp::idctTest,
+//                							holder.mcu[resI],
+//                							holder);
 
+//                resI++;
                 sizes[i]--;
             }
         

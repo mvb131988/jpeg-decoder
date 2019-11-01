@@ -104,7 +104,10 @@ public class RestartIntervalDecoderProcedureTest {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // MCUs
         
-        when(dp.decodeMCU(Mockito.any(NextBitReader.class), Mockito.any(DecoderContext.class)))
+        when(dp.decodeMCU(Mockito.any(NextBitReader.class), 
+        				  Mockito.any(DecoderContext.class),
+        				  Mockito.any(MCUCalculationDataHolder.class)
+        				 ))
         .then(new Answer<int[][][]>() {
             
             private int[][][][] mcus = new int[4][][][];

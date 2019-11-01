@@ -121,7 +121,12 @@ public class MCUDecoderProcedureTest {
         /////////////////////////////////////////////////////////////////////////////
         
         NextBitReader nbr = Mockito.mock(NextBitReader.class);
-        when(dataUnitDecoderProcedure.decode(nbr, hts0, hts2, qts0)).then(new Answer<int[]>() {
+        when(dataUnitDecoderProcedure.decode(Mockito.eq(nbr), 
+        									 Mockito.eq(hts0), 
+        									 Mockito.eq(hts2), 
+        									 Mockito.eq(qts0), 
+        									 Mockito.any(MCUCalculationDataHolder.class)))
+        .then(new Answer<int[]>() {
             
             //zig zag order data units for the first component
             private int[][] zzs01 = new int[][] {zz01, zz02, zz03, zz04};
@@ -143,7 +148,12 @@ public class MCUDecoderProcedureTest {
             }
         });
         
-        when(dataUnitDecoderProcedure.decode(nbr, hts1, hts3, qts1)).then(new Answer<int[]>() {
+        when(dataUnitDecoderProcedure.decode(Mockito.eq(nbr), 
+        									 Mockito.eq(hts1), 
+        									 Mockito.eq(hts3), 
+        									 Mockito.eq(qts1), 
+        									 Mockito.any(MCUCalculationDataHolder.class)))
+        .then(new Answer<int[]>() {
             
             //zig zag order data units for the second and third component
             private int[][] zzs023 = new int[][] {zz05, zz06};
@@ -171,7 +181,9 @@ public class MCUDecoderProcedureTest {
         //array to two dimensional zig zag reordered array
         when(dudp.dequantize(Mockito.any(int[].class), 
                              Mockito.any(QuantizationTableSpecification.class),
-                             Mockito.any(Idct.class)))
+                             Mockito.any(Idct.class),
+                             Mockito.any(int[][].class),
+                             Mockito.any(MCUCalculationDataHolder.class)))
         .then(new Answer<int[][]>() {
             @Override
             public int[][] answer(InvocationOnMock invocation) throws Throwable {
@@ -182,8 +194,15 @@ public class MCUDecoderProcedureTest {
                 return zz1;
             }
         });
+
+        calculateMCUParams(dc);
         
-        int[][][] mcu = dp.decodeMCU(nbr, dc);
+        int[][][] mcu = new int[dc.mcuSize][8][8]; 
+        MCUCalculationDataHolder holder = new MCUCalculationDataHolder();
+        holder.mcu = mcu;
+        
+        dp.decodeMCU(nbr, dc, holder);
+        mcu = holder.mcu;
         
         /////////////////////////////////////////////////////////////////////////////
         //Asserts
@@ -216,6 +235,19 @@ public class MCUDecoderProcedureTest {
         assertEquals(64, mcu[0].length*mcu[3][0].length);
         assertEquals(64, mcu[0].length*mcu[4][0].length);
         assertEquals(64, mcu[0].length*mcu[5][0].length);
+    }
+    
+    private void calculateMCUParams(DecoderContext dc) {
+    	FrameHeader fh = dc.frameHeader;
+    	//MCU consists of data units from different image components.
+        //Sizes contain number of data units in single MCU per image component.
+        int[] sizes = new int[fh.Nf];
+        //number of data units in the MCU
+        int Nb = 0;
+        for (int i = 0; i < sizes.length; i++) {sizes[i] = fh.Vs[i] * fh.Hs[i]; Nb += sizes[i];}
+        
+        dc.mcuComponentsSize(sizes);
+        dc.mcuSize = Nb;
     }
     
 }

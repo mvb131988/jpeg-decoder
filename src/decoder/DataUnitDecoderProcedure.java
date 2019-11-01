@@ -20,25 +20,26 @@ public class DataUnitDecoderProcedure {
     public int[] decode(NextBitReader nbr, 
                         HuffmanTableSpecification dHt, 
                         HuffmanTableSpecification aHt, 
-                        QuantizationTableSpecification qts) throws IOException 
+                        QuantizationTableSpecification qts,
+                        MCUCalculationDataHolder holder) throws IOException 
     {
         //Decode DC coefficient
         //number of codes of each size
         int[] dcBits = dHt.getLis();
-        List<Integer> dcHuffSize = htst.huffSize(dcBits);
-        List<Integer> dcHuffCode = htst.huffCode(dcHuffSize);
-        DecodeTables dcDt = htst.decodeTables(dcBits, dcHuffCode);
+        List<Integer> dcHuffSize = htst.huffSize(dcBits, holder);
+        List<Integer> dcHuffCode = htst.huffCode(dcHuffSize, holder);
+        DecodeTables dcDt = htst.decodeTables(dcBits, dcHuffCode, holder);
         int[] dcHuffVal = dHt.vij;
-        int val = dcDp.decodeDc(dcDt, dcHuffVal, nbr)[0];
+        int val = dcDp.decodeDc(dcDt, dcHuffVal, nbr, holder)[0];
         
         //Decode 63 AC coefficients
         int[] acBits = aHt.getLis();
-        List<Integer> acHuffSize = htst.huffSize(acBits);
-        List<Integer> acHuffCode = htst.huffCode(acHuffSize);
-        DecodeTables acDt = htst.decodeTables(acBits, acHuffCode);
+        List<Integer> acHuffSize = htst.huffSize(acBits, holder);
+        List<Integer> acHuffCode = htst.huffCode(acHuffSize, holder);
+        DecodeTables acDt = htst.decodeTables(acBits, acHuffCode, holder);
         int[] acHuffVal = aHt.vij;
         
-        int[] zz = acDp.decodeAc(acDt, acHuffVal, nbr);
+        int[] zz = acDp.decodeAc(acDt, acHuffVal, nbr, holder);
         //set DC coefficient
         zz[0] = val;
         

@@ -3,51 +3,11 @@ package markers;
 import java.util.ArrayList;
 import java.util.List;
 
-import decoder.DecodeProcedureContext;
+import decoder.MCUCalculationDataHolder;
 
 public class HuffmanTableSpecificationsTransformer {
 
-//    private List<Integer> huffmanCodeSizesTable;
-    
-    @Deprecated
-    public DecodeProcedureContext transform(HuffmanTableSpecification hts) {
-        //number of codes of each size
-        int[] bits = hts.getLis();
-        
-        int[] huffVal = hts.vij;
-        List<Integer> huffSize = huffSize(bits);
-        List<Integer> huffCode = huffCode(huffSize);
-        
-        //TODO: pass huffVal
-        DecodeProcedureContext dpc = new DecodeProcedureContext(null, huffSize, huffCode, bits);
-        
-//        int lastK = huffSize.size();
-        //////////////////////////////////////////////////////////
-        
-        //////////////////////////////////////////////////////////
-        // USED ONLY FOR ENCODER!!!
-//        int i=0;
-//        int[] eHufCo = new int[256];
-//        int[] eHufSi = new int[256];
-//        for(int i0=0; i0<256; i0++) {eHufCo[i0] = -1; eHufSi[i0] = -1;}
-//        
-//        int k = 0;
-//        while (k < lastK-1) {
-//            i = huffVal.get(k);
-//            eHufCo[i] = huffCode.get(k);
-//            eHufSi[i] = huffSize.get(k);
-//            k++;
-//        }
-        
-        //TODO: probably eHufCo, eHufSi sizes need to be reduced by throwing away -1 elements
-        //This way their size would be equal to huffVal, huffCode and huffSize values
-        
-        //System.out.println(huffCode);
-        
-        return dpc;
-    }
-    
-    public List<Integer> huffSize(int[] bits) {
+    public List<Integer> huffSize(int[] bits, MCUCalculationDataHolder holder) {
         //////////////////////////////////////////////////////////
         // huffSize list generation
         // Example = [2, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 0]
@@ -55,7 +15,7 @@ public class HuffmanTableSpecificationsTransformer {
         // Element 2 means that current code length is equal to 2,
         // than go 5 sequential code of length of 3, than one code length of 4
         // and so on and so forth till the end.
-        List<Integer> huffSize = new ArrayList<>();
+        List<Integer> huffSize = holder.emptyHuffSize();
 
         int k = 0;
         int i = 1;
@@ -77,7 +37,7 @@ public class HuffmanTableSpecificationsTransformer {
         return huffSize;
     }
     
-    public List<Integer> huffCode(List<Integer> huffSize) {
+    public List<Integer> huffCode(List<Integer> huffSize, MCUCalculationDataHolder holder) {
         //////////////////////////////////////////////////////////
         //huffCode list generation
         //each code huffCode[i] has length of huffSize[i] bits
@@ -86,7 +46,7 @@ public class HuffmanTableSpecificationsTransformer {
         // [2, 3, 3, 3, 3, 3, 4,  5,  6,  7,   8,   9,   0]
         //  |  |  |  |  |  |  |   |   |   |    |    |    
         // [0, 2, 3, 4, 5, 6, 14, 30, 62, 126, 254, 510]
-        List<Integer> huffCode = new ArrayList<>();
+        List<Integer> huffCode = holder.emptyHuffCode();
         
         int k = 0;
         int code = 0;
@@ -142,13 +102,13 @@ public class HuffmanTableSpecificationsTransformer {
      * valPtr value is an index(in huffVal array) to the first huffVal from consecutive elements sequence 
      * corresponded to Huffman code of length defined by bits structure
      */
-    public DecodeTables decodeTables(int[] bits, List<Integer> huffCode) {
+    public DecodeTables decodeTables(int[] bits, List<Integer> huffCode, MCUCalculationDataHolder holder) {
         //largest code value for a given length
-        int[] maxCode = new int[16];
+        int[] maxCode = holder.maxCode;
         //smallest code value for a given length
-        int[] minCode = new int[16];
+        int[] minCode = holder.minCode;
         //index to the start of the list of values in huffVal, where in valPtr[i] i is word length 
-        int[] valPtr = new int[16];
+        int[] valPtr = holder.valPtr;
         
         //length of Huffman code. Starts with 1.
         int i = 0;
@@ -171,13 +131,19 @@ public class HuffmanTableSpecificationsTransformer {
             }
         }
         
-        return new DecodeTables(maxCode, minCode, valPtr);
+        holder.dts.maxCode = maxCode;
+        holder.dts.minCode = minCode;
+        holder.dts.valPtr = valPtr;
+        
+        return holder.dts;
     }
     
     public static class DecodeTables {
         public int[] maxCode;
         public int[] minCode;
         public int[] valPtr;
+        
+        public DecodeTables() {}
         
         public DecodeTables(int[] maxCode, int[] minCode, int[] valPtr) {
             super();

@@ -122,7 +122,7 @@ public class ACDecodeProcedureTest {
         int[] huffVal = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
         DecodeTables dcDt = new DecodeTables(maxCode, minCode, valPtr);
         
-        int dc = dcDp.decodeDc(dcDt, huffVal, nbr)[0];
+        int dc = dcDp.decodeDc(dcDt, huffVal, nbr, new MCUCalculationDataHolder())[0];
         //////////////////////////////////////////////////////////////////////////////////////////
         
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ public class ACDecodeProcedureTest {
         //
         DecodeTables dts = new DecodeTables(maxCode, minCode, valPtr);
         
-        int[] actualDu = acDp.decodeAc(dts, huffVal, nbr);
+        int[] actualDu = acDp.decodeAc(dts, huffVal, nbr, new MCUCalculationDataHolder());
         actualDu[0] = dc;
         //////////////////////////////////////////////////////////////////////////////////////////
         

@@ -18,7 +18,7 @@ public class NextBitReader {
     
     protected int untransformedByte;
     
-    private static List<Integer> byteLog = new ArrayList<>();
+//    private static List<Integer> byteLog = new ArrayList<>();
     
     public NextBitReader(BufferedReader br) {
         this.br = br;
@@ -36,14 +36,14 @@ public class NextBitReader {
             b = br.next();
             
             untransformedByte = b;
-            byteLog.add(b);
+//            byteLog.add(b);
             
             cnt = 8;
             if(b == 0xff) {
                 b2 = br.next();
                 
                 untransformedByte = b;
-                byteLog.add(b2);
+//                byteLog.add(b2);
                 
                 if(b2 != 0) {
                     //TODO: process DNL. in current example no DNL

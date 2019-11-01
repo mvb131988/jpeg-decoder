@@ -19,12 +19,14 @@ public class DataUnitDequantizationProcedure {
      */
     public int[][] dequantize(int[] zz,
                               QuantizationTableSpecification qts,
-                              Idct idct) throws IOException 
+                              Idct idct,
+                              int[][] du,
+                              MCUCalculationDataHolder holder) throws IOException 
     {
         //zz coefficients in original order
-        int[][] orderedZz = inverseZigZag(zz);
+        int[][] orderedZz = inverseZigZag(zz, holder.orderedQks);
         //dequantized zz
-        int[][] dequantizedZz = dequantize(orderedZz, inverseZigZag(qts.getQks()), idct);
+        int[][] dequantizedZz = dequantize(orderedZz, inverseZigZag(qts.getQks(), holder.orderedQks), idct, du);
         return dequantizedZz;
     }
     
@@ -35,9 +37,7 @@ public class DataUnitDequantizationProcedure {
      * @param zz
      * @return
      */
-    private int[][] inverseZigZag(int[] zz) {
-        int[][] temp = new int[8][8];
-        
+    private int[][] inverseZigZag(int[] zz, int[][] temp) {
         int i=0, j=0;
         boolean isUpward = true;
         
@@ -70,7 +70,7 @@ public class DataUnitDequantizationProcedure {
      * @param orderedQks - quantization coefficients restored from zig zag order to original
      * @return TODO
      */
-    private int[][] dequantize(int[][] orderedZz, int[][] orderedQks, Idct idct) {
+    private int[][] dequantize(int[][] orderedZz, int[][] orderedQks, Idct idct, int[][] du) {
         //////////////// dequantization step /////////////////////////////
         for(int i=0; i<orderedZz.length; i++) {
             for(int j=0; j<orderedZz[0].length; j++) {
@@ -79,7 +79,7 @@ public class DataUnitDequantizationProcedure {
         }
         //////////////////////////////////////////////////////////////////
         
-        int[][] samples = new int[8][8];
+        int[][] samples = du;
         
         for(int y=0; y<samples.length; y++) {
             for(int x=0; x<samples.length; x++) {

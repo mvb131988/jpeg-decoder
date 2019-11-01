@@ -2,41 +2,46 @@ package main;
 
 import java.nio.file.Paths;
 
-import decoder.DecoderControlProcedure;
-import markers.Image;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import persister.BmpFileWriter;
-import persister.Pixel;
-import persister.PixelConverter;
 
 //https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 //https://www.ece.ucdavis.edu/cerl/reliablejpeg/compression/
 public class Main {
     
+	private static Logger logger = LogManager.getRootLogger();
+	
     public static void main(String[] args) throws Exception {
-    	//TODO: Move to property file
+    	
+    	System.out.println("Total space " + Runtime.getRuntime().totalMemory() + " bytes");
+    	System.out.println("Free space " + Runtime.getRuntime().freeMemory() + " bytes");
+    	System.out.println("Used space " + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()) + " bytes");
+    	
+    	int[][] twoDim = new int[20][];
+    	for(int i=0; i<20; i++) twoDim[i]=new int[10];
+    	for(int i=0; i<20; i++)
+    		for(int j=0; j<10; j++)
+    			twoDim[i][j] = i+j;
+    	
+    	System.out.println("Total space " + Runtime.getRuntime().totalMemory() + " bytes");
+    	System.out.println("Free space " + Runtime.getRuntime().freeMemory() + " bytes");
+    	System.out.println("Used space " + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory()) + " bytes");
+    	
+    	long maxMemory = Runtime.getRuntime().maxMemory()/1_000_000;
+    	logger.info("Max memory: " + maxMemory + " Mb");
+    	
+    	AppProperties appProperties = new AppProperties();
     	
     	//sets the root of the file system, that will be scanned for jpeg images
-    	String inputPath = "C:\\endava\\workspace\\jpeg-decoder";
+    	String inputPath = appProperties.inputPath;
     	//sets the root of the file system, that will persist bmp images(the result
     	//of jpeg transformation, found in inputPath)
-    	String outputPath = "C:\\endava\\workspace\\jpeg-decoder\\output";
-    	//output(bmp) file name
-    	String fileName = "bmp_img_out.bmp";
+    	String outputPath = appProperties.outputPath;
     	
     	new BmpFileWriter().writeAll(Paths.get(inputPath), Paths.get(outputPath));
     	
-        DecoderControlProcedure dcp = new DecoderControlProcedure("IMG_20190828_201042.jpg");
-        Image img = dcp.decodeImage();
-        
-        PixelConverter pc = new PixelConverter(); 
-        Pixel[][] pixels = pc.scale(pc.convert(img));
-        
-//        BmpInHtmlWriter writer = new BmpInHtmlWriter();
-//        writer.create(pixels);
-
-        BmpFileWriter bfw = new BmpFileWriter();
-        bfw.write(Paths.get(outputPath), Paths.get(""), Paths.get(fileName), pixels);
-        
-        System.out.println("img");
+    	logger.info("PROCESS HAS BEEN FINISHED");
     }
 }

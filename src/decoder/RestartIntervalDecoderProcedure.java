@@ -1,6 +1,19 @@
 package decoder;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import markers.FrameHeader;
 import markers.Image;
@@ -8,6 +21,8 @@ import util.BufferedReader;
 
 public class RestartIntervalDecoderProcedure {
 
+	private static Logger logger = LogManager.getRootLogger();
+	
     private MCUDecoderProcedure dp = new MCUDecoderProcedure();
     
     public Image decodeRestartInterval(BufferedReader br, DecoderContext dc) throws IOException {
@@ -30,11 +45,28 @@ public class RestartIntervalDecoderProcedure {
         int nY = extYDataUnit[0]/dc.frameHeader.Vs[0];
         
         int numberOfMcu = nX*nY;
-        int[][][][] mcus = new int [numberOfMcu][][][];
+        
+        FileSystemMcuWriter fsmw = new FileSystemMcuWriter();
+//        int[][][][] mcus = new int [numberOfMcu][][][];
+        
+        //ca
+        calculateMCUParams(dc);
+        
+        //initial mcu structure that will be used to read all of the mcus from the given file
+        //is made for the sake of memory consumption optimization(to be able measure used memory
+        //without relying on the GC)
+        int[][][] mcu = new int[dc.mcuSize][8][8];
+        
+        //------------------------------------------------------------------------------------------
+        MCUCalculationDataHolder holder = new MCUCalculationDataHolder();
+        holder.mcu = mcu;
+        //------------------------------------------------------------------------------------------
+        
+        System.out.println("Used memory " + (Runtime.getRuntime().freeMemory())/1_000_000);
         
         NextBitReader nbr = new NextBitReader(br);
         int i = 0;
-        while (i < mcus.length) {
+        while (i < numberOfMcu) {
         	//check restart interval marker
         	int b1 = br.next();
         	int b2 = br.next();
@@ -50,20 +82,55 @@ public class RestartIntervalDecoderProcedure {
         		br.pushBack(b1);
         		br.pushBack(b2);
         	
-        		mcus[i++] = dp.decodeMCU(nbr, dc);
+        		mcu = dp.decodeMCU(nbr, dc, holder);
+        		fsmw.write(mcu);
+        		
+//        		mcus[i] = mcu;
+        		i++;
+        		System.out.println("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
+        						   " Total memory" + (Runtime.getRuntime().totalMemory())/1_000_000);
         	} else {
         		// refresh actions when restart marker is met 
         		dc.initPredDC();
         		nbr = new NextBitReader(br);
         	}
         }
+        fsmw.close();
+		
+        System.out.println("Used memory " + (Runtime.getRuntime().freeMemory()));
         
+        //number of dus in MCU 
+        int numberOfDu = 0;
+        for (int j = 0; j < dc.frameHeader.Cs.length; j++) numberOfDu += dc.frameHeader.Vs[j] * dc.frameHeader.Hs[j];
+        FileSystemMcuReader fsmr = new FileSystemMcuReader(numberOfDu);
         //TODO:
         // move flatten logic to a separate class
         // handle restart interval(definition marker) marker
-        int[][][] samples = flattenMCUs(mcus, dc);
+        int[][][] samples = flattenMCUs(numberOfMcu, fsmr, dc);
+        fsmr.close();
+        
+        System.out.println("Used memory " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000);
         
         return new Image(samples, dc.frameHeader.Hs, dc.frameHeader.Vs); 
+    }
+    
+    /**
+     * Calculates MCU overall size as well as MCU per component size (size is calculated in DUs)
+     * and stores it in decoder context  
+     * 
+     * @return number of DUs in the MCU
+     */
+    private void calculateMCUParams(DecoderContext dc) {
+    	FrameHeader fh = dc.frameHeader;
+    	//MCU consists of data units from different image components.
+        //Sizes contain number of data units in single MCU per image component.
+        int[] sizes = new int[fh.Nf];
+        //number of data units in the MCU
+        int Nb = 0;
+        for (int i = 0; i < sizes.length; i++) {sizes[i] = fh.Vs[i] * fh.Hs[i]; Nb += sizes[i];}
+        
+        dc.mcuComponentsSize(sizes);
+        dc.mcuSize = Nb;
     }
     
     /**
@@ -73,8 +140,9 @@ public class RestartIntervalDecoderProcedure {
      * largest image component corresponds to coordinates of the pixel in output bitmap image) 
      * 
      * @return components(3 components) as two dimensional arrays
+     * @throws IOException 
      */
-    private int[][][] flattenMCUs(int[][][][] mcus, DecoderContext dc) {
+    private int[][][] flattenMCUs(int numberOfMcu, FileSystemMcuReader fsmr, DecoderContext dc) throws IOException {
         
         //number of components
         int nComponents = dc.frameHeader.Nf;   
@@ -91,19 +159,20 @@ public class RestartIntervalDecoderProcedure {
         
         FrameHeader fh = dc.frameHeader;
         
-        for(int mcuI = 0; mcuI<mcus.length; mcuI++) {
+        for(int mcuI = 0; mcuI<numberOfMcu; mcuI++) {
             //MCU consists of data units from different image components.
             //Sizes contain number of data units in single MCU per image component.
             int[] sizes = new int[fh.Cs.length];
             for (int i = 0; i < sizes.length; i++) {sizes[i] = fh.Vs[i] * fh.Hs[i];}
             
+            int[][][] mcu = fsmr.read();
             int duI = 0;
             for(int i=0; i<nComponents; i++) 
                 while(sizes[i]>0) {
-                    cas[i].add(mcus[mcuI][duI++]);
+                    cas[i].add(mcu[duI++]);
                     sizes[i]--;
                 }
-            //System.out.println("MCU: " + mcuI + " is processed");
+//            logger.trace("MCU: " + mcuI + " is processed during flattening process");
         }
         
         int[][][] samples = new int[nComponents][][];
@@ -223,6 +292,78 @@ public class RestartIntervalDecoderProcedure {
         
     }
 
+    //--------------------------------------------------------------------------------------------------
+    /**
+     * This class is intended to store mcu[i1][i2][i3][i4], where i1 - mcu serial number,
+     * i2 - du serial number(into i1 mcu), i3 - row serial number(into i2 du),
+     * i4 - column serial number(into i3 row)  
+     */
+    private static class FileSystemMcuWriter {
+    	
+    	private OutputStream os;
+    	
+    	public FileSystemMcuWriter() throws IOException {
+    		Files.createDirectories(Paths.get("tmp"));
+    		
+    		//TODO: external property
+    		Path p = Paths.get("C:\\endava\\workspace\\jpeg-decoder\\tmp\\mcus");
+    		Files.deleteIfExists(p);
+    		Files.createFile(p);
+    		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE));
+    	}
+    	
+    	/**
+    	 * mcu[i1][i2][i3], i1 - serial number of du, i2 - serial number of a row,
+    	 * i3 - serial number of a column 
+    	 * @throws IOException 
+    	 */
+    	public void write(int[][][] mcu) throws IOException {
+    		for(int[][] du: mcu) 
+    			for(int[] row: du)
+    				for(int column: row) 
+    					os.write(column);
+    	}
+    	
+    	public void close() throws IOException {
+    		os.close();
+    	}
+    	
+    }
+    //--------------------------------------------------------------------------------------------------
+    private static class FileSystemMcuReader {
+    	
+    	private int duN;
+    	
+    	private InputStream is;
+    	
+    	public FileSystemMcuReader(int duN) throws IOException {
+    		this.duN = duN; 
+    		
+    		Path p = Paths.get("C:\\endava\\workspace\\jpeg-decoder\\tmp\\mcus");
+    		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ));
+    	}
+    	
+    	/**
+    	 * 
+    	 * @return
+    	 * @throws IOException 
+    	 */
+    	public int[][][] read() throws IOException {
+    		int[][][] mcu = new int[duN][8][8];
+    		for(int i=0; i<mcu.length; i++)
+    			for(int j=0; j<8; j++)
+    				for(int k=0; k<8; k++)
+    					mcu[i][j][k] = is.read();
+    		return mcu;
+    	}
+    	
+    	public void close() throws IOException {
+    		is.close();
+    	}
+    	
+    }
+    //--------------------------------------------------------------------------------------------------
+    
     public MCUDecoderProcedure getDp() {
         return dp;
     }

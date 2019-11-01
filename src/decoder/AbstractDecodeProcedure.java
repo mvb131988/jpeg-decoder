@@ -19,7 +19,7 @@ public abstract class AbstractDecodeProcedure {
      * @return
      * @throws IOException
      */
-    public int[] decode(DecodeTables dt, int[] huffVal, NextBitReader nbr) throws IOException {
+    public int[] decode(DecodeTables dt, int[] huffVal, NextBitReader nbr, MCUCalculationDataHolder holder) throws IOException {
         //Aliases
         ///////////////////////////////////////////////////////////////////////////////////////////
         int[] maxCode = dt.maxCode;
@@ -43,7 +43,8 @@ public abstract class AbstractDecodeProcedure {
         j -= minCode[i-1];
         int t = huffVal[j];
         
-        int[] tArr = new int[] {t};
+        int[] tArr = holder.tArr; 
+        tArr[0] = t;
         return tArr;
     }
     

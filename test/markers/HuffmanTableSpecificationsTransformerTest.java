@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import decoder.MCUCalculationDataHolder;
+
 public class HuffmanTableSpecificationsTransformerTest {
 
     private HuffmanTableSpecificationsTransformer htst = new HuffmanTableSpecificationsTransformer();
@@ -24,7 +26,7 @@ public class HuffmanTableSpecificationsTransformerTest {
         //Each code size is repeated exactly the same times as the corresponding number of entries are 
         //(Example: code size = 3, number of entries bits[2]=5. This will gives 5 consecutive values of 3 in the output)
         int[] bits = new int[] { 0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
-        List<Integer> huffSize = htst.huffSize(bits);
+        List<Integer> huffSize = htst.huffSize(bits, new MCUCalculationDataHolder());
         
         // Overall number of codes(across all sizes)
         int noc = Arrays.stream(bits).reduce(0, (a,b) -> a+b);
@@ -51,7 +53,7 @@ public class HuffmanTableSpecificationsTransformerTest {
     @Test
     public void testHuffCode() {
         List<Integer> huffSize = Arrays.asList(2, 3, 3, 3, 3, 3, 4, 5, 6, 7, 8, 9, 0);
-        List<Integer> huffCode = htst.huffCode(huffSize);
+        List<Integer> huffCode = htst.huffCode(huffSize, new MCUCalculationDataHolder());
         
         List<Integer> expected = Arrays.asList(0, 2, 3, 4, 5, 6, 14, 30, 62, 126, 254, 510);
         assertOrder(expected, huffCode);
@@ -73,7 +75,7 @@ public class HuffmanTableSpecificationsTransformerTest {
         int[] bits = new int[] { 0, 1, 5, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0 };
         List<Integer> huffCode = Arrays.asList(0, 2, 3, 4, 5, 6, 14, 30, 62, 126, 254, 510);
         
-        HuffmanTableSpecificationsTransformer.DecodeTables dts = htst.decodeTables(bits, huffCode);
+        HuffmanTableSpecificationsTransformer.DecodeTables dts = htst.decodeTables(bits, huffCode, new MCUCalculationDataHolder());
         int[] expectedMaxCode = new int[] { -1, 0, 6, 14, 30, 62, 126, 254, 510, -1, -1, -1, -1, -1, -1, -1};
         int[] expectedMinCode = new int[] { 0, 0, 2, 14, 30, 62, 126, 254, 510, 0, 0, 0, 0, 0, 0, 0};
         int[] expectedValPtr = new int[] { 0, 0, 1, 6, 7, 8, 9, 10, 11, 0, 0, 0, 0, 0, 0, 0};

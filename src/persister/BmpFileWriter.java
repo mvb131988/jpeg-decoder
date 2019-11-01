@@ -9,11 +9,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import decoder.DecoderControlProcedure;
 import markers.Image;
 
 public class BmpFileWriter {
     
+	private static Logger logger = LogManager.getRootLogger();
+	
     /**
      * 
      * @param root - root of the file system, that will persist bmp images(the result
@@ -49,6 +54,14 @@ public class BmpFileWriter {
     	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot, outputRoot));
     }	
     
+    /**
+     * Visits any jpeg file that lies into file system defined by input root path,
+     * tries to create bmp file and store it into file system defined by output
+     * root path. 
+     * 
+     * IMPORTANT: relative file path(relative from the root) in output file system 
+     * 			  is preserved the same as relative file path in input file system. 
+     */
     private static class JpegFilesVisitor implements FileVisitor<Path> {
 
     	private BmpFileWriter writer;
@@ -76,26 +89,23 @@ public class BmpFileWriter {
 				extension = fileName.substring(fileName.lastIndexOf(".")+1);
 				if(extension.equals("jpg")) {
 					//bmp file relative path including file name
-					Path rp = inputRoot.relativize(file);
-					String rp0 = rp.toString();
-					rp0 = rp0.substring(0, rp0.lastIndexOf(".")).concat(".bmp");
-					
-					Pixel[][] pixels = null;
+					Path rpBmp = bmpRelativePath(file);
 					try {
 						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
 						Image img = dcp.decodeImage();
 						PixelConverter pc = new PixelConverter(); 
-						pixels = pc.scale(pc.convert(img));
-					} catch (Exception e) {
-						System.out.println("log here");
+						Pixel[][] pixels = pc.scale(pc.convert(img));
+						
+						writer.write(outputRoot, 
+									 rpBmp.getParent() == null ? Paths.get("") : rpBmp.getParent(), 
+									 rpBmp.getFileName(), 
+									 pixels);
+
+						logger.info(file + " is processed");
+					} catch (Throwable th) {
+						logger.error(file + " fails with " + th.toString());
+						th.printStackTrace();
 					}
-					
-					//relative path(relative to the root) without file name
-					Path prp = Paths.get(rp0).getParent();
-					prp = prp == null ? Paths.get("") : prp;
-					writer.write(outputRoot, prp, Paths.get(rp0).getFileName(), pixels);
-					
-					System.out.println(file + " is processed");
 				}
 			}
 			return FileVisitResult.CONTINUE;
@@ -110,7 +120,25 @@ public class BmpFileWriter {
 		public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
 			return FileVisitResult.CONTINUE;
 		}
-    	
+		
+		/**
+		 * 
+		 * @param apJpeg - jpeg absolute path
+		 * @param rpJpeg - jpeg realative path
+		 * @return
+		 */
+		private Path bmpRelativePath(Path apJpeg) {
+			//jpg file relative path including file name
+			Path rpJpeg = inputRoot.relativize(apJpeg);
+			
+			//file extension substitution
+			String srp0 = rpJpeg.toString();
+			srp0 = srp0.substring(0, srp0.lastIndexOf(".")).concat(".bmp");
+			//bmp file relative path including file name
+			Path rpBmp = Paths.get(srp0);
+			
+			return rpBmp;
+		}
     }
     
 }

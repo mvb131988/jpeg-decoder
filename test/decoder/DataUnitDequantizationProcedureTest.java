@@ -52,9 +52,9 @@ public class DataUnitDequantizationProcedureTest {
                                   {  3,    -2,    0,  -1,    2,   -1,     0,    1},
                                   { -1,     0,    0,   0,    0,    0,     2,   -2}};
         
-        Method method = dudp.getClass().getDeclaredMethod("inverseZigZag", int[].class);
+        Method method = dudp.getClass().getDeclaredMethod("inverseZigZag", int[].class, int[][].class);
         method.setAccessible(true);
-        int[][] orderedZz = (int[][]) method.invoke(dudp, zigZagDu);
+        int[][] orderedZz = (int[][]) method.invoke(dudp, zigZagDu, new int[8][8]);
         
         assertEquals(du.length, orderedZz.length);
         for (int i = 0; i < du.length; i++) {
@@ -101,9 +101,9 @@ public class DataUnitDequantizationProcedureTest {
                                    {6,   8,   9,  10,  12,  15,  14,  12},
                                    {9,  11,  11,  12,  13,  12,  12,  12}};
         
-        Method method = dudp.getClass().getDeclaredMethod("inverseZigZag", int[].class);
+        Method method = dudp.getClass().getDeclaredMethod("inverseZigZag", int[].class, int[][].class);
         method.setAccessible(true);
-        int[][] orderedQks = (int[][]) method.invoke(dudp, zigZagQks);
+        int[][] orderedQks = (int[][]) method.invoke(dudp, zigZagQks, new int[8][8]);
         
         assertEquals(Qks.length, orderedQks.length);
         for (int i = 0; i < Qks.length; i++) {
@@ -157,7 +157,7 @@ public class DataUnitDequantizationProcedureTest {
         //zz coefficients(data unit) after dequantization, for this test case would
         //have the same value. Calculated value is equal to 369, that will be reduced 
         //to 255 in order to fit 8 bits. 
-        int[][] samples = dudp.dequantize(zigZagDu, qts, dudp::idctTest);
+        int[][] samples = dudp.dequantize(zigZagDu, qts, dudp::idctTest, new int[8][8], new MCUCalculationDataHolder());
         
         assertEquals(ddu.length, samples.length);
         for(int[] row: samples) 

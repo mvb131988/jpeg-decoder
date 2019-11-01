@@ -17,12 +17,12 @@ public class ACDecodeProcedure extends AbstractDecodeProcedure {
      * @return
      * @throws IOException
      */
-    public int[] decodeAc(DecodeTables acDt, int[] huffVal, NextBitReader nbr) throws IOException {
+    public int[] decodeAc(DecodeTables acDt, int[] huffVal, NextBitReader nbr, MCUCalculationDataHolder holder) throws IOException {
         int k=1;
-        int[] zz = new int[64];
+        int[] zz = holder.zz;
         
         for(;;) {
-            int RS = decode(acDt, huffVal, nbr)[0];
+            int RS = decode(acDt, huffVal, nbr, holder)[0];
             int SSSS = RS % 16;
             int RRRR = RS >>> 4;
             int R = RRRR;

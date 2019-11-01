@@ -23,14 +23,11 @@ public class DataUnitDecoderProcedureTest {
     
     private ACDecodeProcedure acDp;
     
-    private DataUnitDequantizationProcedure duDequantPrc;
-    
     @Before
     public void setUp() {
         htst = Mockito.mock(HuffmanTableSpecificationsTransformer.class);
         dcDp = Mockito.mock(DCDecodeProcedure.class);
         acDp = Mockito.mock(ACDecodeProcedure.class);
-        duDequantPrc = Mockito.mock(DataUnitDequantizationProcedure.class);
         
         dudp.setHtst(htst);
         dudp.setDcDp(dcDp);
@@ -51,15 +48,26 @@ public class DataUnitDecoderProcedureTest {
         int[] zzZigZag = new int[64];
         for(int i=0; i<64; i++) zzZigZag[i] = i;
         
-        when(dcDp.decodeDc(null, null, nbr)).thenReturn(new int[] {-64});
-        when(acDp.decodeAc(null, null, nbr)).thenReturn(zzZigZag);
+        when(dcDp.decodeDc(Mockito.isNull(), 
+        				   Mockito.isNull(), 
+        				   Mockito.eq(nbr), 
+        				   Mockito.any(MCUCalculationDataHolder.class)))
+        .thenReturn(new int[] {-64});
+        
+        when(acDp.decodeAc(Mockito.isNull(), 
+        				   Mockito.isNull(), 
+        				   Mockito.eq(nbr), 
+        				   Mockito.any(MCUCalculationDataHolder.class)))
+        .thenReturn(zzZigZag);
+        
         //no quantization table available at this moment. Just fake it with zzZigZag
         when(qts.getQks()).thenReturn(zzZigZag);
         
         int[] zz = dudp.decode(nbr, 
                                Mockito.mock(HuffmanTableSpecification.class), 
                                Mockito.mock(HuffmanTableSpecification.class),
-                               qts);
+                               qts,
+                               new MCUCalculationDataHolder());
         
         int[] expectedZZ = new int[] {-64,  1,   2,  3,  4,  5,  6,  7,
                                         8,  9,  10, 11, 12, 13, 14, 15,

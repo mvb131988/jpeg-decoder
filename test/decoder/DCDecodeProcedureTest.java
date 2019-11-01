@@ -60,7 +60,7 @@ public class DCDecodeProcedureTest {
         
         NextBitReader nbr = new NextBitReader(new BufferedReader(is)); 
 
-        int dc = dcDp.decode(dcDt, huffVal, nbr)[0];
+        int dc = dcDp.decode(dcDt, huffVal, nbr, new MCUCalculationDataHolder())[0];
         assertEquals(7, dc);
     }
     
@@ -161,7 +161,7 @@ public class DCDecodeProcedureTest {
         
         NextBitReader nbr = new NextBitReader(new BufferedReader(is)); 
 
-        int dc = dcDp.decodeDc(dcDt, huffVal, nbr)[0];
+        int dc = dcDp.decodeDc(dcDt, huffVal, nbr, new MCUCalculationDataHolder())[0];
         assertEquals(-85, dc);
     }
     
