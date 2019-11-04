@@ -69,6 +69,24 @@
             </plugin>
         </plugins>    
     </build>
+    <profiles>
+		<profile>
+			<id>test</id>
+			<properties>
+				<log>C:\endava\workspace\jpeg-decoder\logs\</log>
+				<input-path>C:\endava\workspace\jpeg-decoder\input</input-path>
+				<output-path>C:\endava\workspace\jpeg-decoder\output</output-path>
+			</properties>
+		</profile>
+		<profile>
+			<id>env</id>
+			<properties>
+				<log>/media/pi/seagate/repo-min/.logs/</log>
+				<input-path>/media/pi/seagate/repo/photo/2019/zurich_03</input-path>
+				<output-path>/media/pi/seagate/repo-min/photo-min</output-path>
+			</properties>
+		</profile>
+	</profiles>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

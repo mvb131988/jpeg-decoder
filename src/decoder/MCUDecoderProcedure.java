@@ -74,7 +74,7 @@ public class MCUDecoderProcedure {
                 zz0[0] += predDCs[i];
                 predDCs[i] = zz0[0];
                 
-                res[resI++] = dudp.dequantize(zz0, quantizationTableSelector.select(qtsList, sh.Td[i]), dudp::idctHigh);
+                res[resI++] = dudp.dequantize(zz0, quantizationTableSelector.select(qtsList, sh.Td[i]), dudp::idctTest);
 
                 sizes[i]--;
             }
