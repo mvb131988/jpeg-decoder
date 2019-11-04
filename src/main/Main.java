@@ -9,12 +9,11 @@ import persister.BmpFileWriter;
 public class Main {
     
     public static void main(String[] args) throws Exception {
-    	AppProperties appProperties = new AppProperties();
     	//sets the root of the file system, that will be scanned for jpeg images
-    	String inputPath = appProperties.inputPath;
+    	String inputPath = AppProperties.getInputPath();
     	//sets the root of the file system, that will persist bmp images(the result
     	//of jpeg transformation, found in inputPath)
-    	String outputPath = appProperties.outputPath;
+    	String outputPath = AppProperties.getOutputPath();
     	
     	new BmpFileWriter().writeAll(Paths.get(inputPath), Paths.get(outputPath));
     }

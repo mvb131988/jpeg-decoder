@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import main.AppProperties;
+
 /**
  * This class is intended to store mcu[i1][i2][i3][i4], where i1 - mcu serial number,
  * i2 - du serial number(into i1 mcu), i3 - row serial number(into i2 du),
@@ -20,8 +22,7 @@ public class FileSystemMCUWriter implements AutoCloseable {
 	public FileSystemMCUWriter() throws IOException {
 		Files.createDirectories(Paths.get("tmp"));
 		
-		//TODO: external property
-		Path p = Paths.get("C:\\endava\\workspace\\jpeg-decoder\\tmp\\mcus");
+		Path p = Paths.get(AppProperties.getTmpPath() + "\\mcus");
 		Files.deleteIfExists(p);
 		Files.createFile(p);
 		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE));

@@ -19,10 +19,6 @@ public class MCUsFlattener {
         int numberOfDu = 0;
         for (int j = 0; j < dc.frameHeader.Cs.length; j++) numberOfDu += dc.frameHeader.Vs[j] * dc.frameHeader.Hs[j];
         
-        
-        //TODO:
-        // move flatten logic to a separate class
-        // handle restart interval(definition marker) marker
         int[][][] samples;
         try(FileSystemMCUReader fsmr = new FileSystemMCUReader(numberOfDu)) {
         	samples = flattenMCUsInternally(numberOfMcu, fsmr, dc);

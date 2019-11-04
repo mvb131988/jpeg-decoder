@@ -8,17 +8,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import main.AppProperties;
+
 public class FileSystemMCUReader implements AutoCloseable {
 	
 	private int duN;
 	
 	private InputStream is;
 	
+	private Path p;
+	
 	public FileSystemMCUReader(int duN) throws IOException {
 		this.duN = duN; 
 		
-		//TODO: parameterize
-		Path p = Paths.get("C:\\endava\\workspace\\jpeg-decoder\\tmp\\mcus");
+		p = Paths.get(AppProperties.getTmpPath() + "\\mcus");
 		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ));
 	}
 	
@@ -39,6 +42,7 @@ public class FileSystemMCUReader implements AutoCloseable {
 	@Override
 	public void close() throws IOException {
 		is.close();
+		Files.deleteIfExists(p);
 	}
 	
 }
