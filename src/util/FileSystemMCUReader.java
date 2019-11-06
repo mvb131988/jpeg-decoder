@@ -21,7 +21,7 @@ public class FileSystemMCUReader implements AutoCloseable {
 	public FileSystemMCUReader(int duN) throws IOException {
 		this.duN = duN; 
 		
-		p = Paths.get(AppProperties.getTmpPath() + "\\mcus");
+		p = Paths.get(AppProperties.getTmpPath() + "mcus");
 		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ));
 	}
 	

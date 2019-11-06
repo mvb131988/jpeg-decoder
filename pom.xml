@@ -1,82 +1,83 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>jpeg-decoder</groupId>
-    <artifactId>jpeg-decoder</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>jpeg-decoder</groupId>
+	<artifactId>jpeg-decoder</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
 
-    <properties>
-        <jdk.version>1.8</jdk.version>
-    </properties>
+	<properties>
+		<jdk.version>1.8</jdk.version>
+	</properties>
 
-    <build>
-        <sourceDirectory>src</sourceDirectory>
-        <testSourceDirectory>test</testSourceDirectory>
-        <resources>
-            <resource>
-                <directory>resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <!-- download source code in Eclipse, best practice -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <downloadSources>true</downloadSources>
-                    <downloadJavadocs>false</downloadJavadocs>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.5.1</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <finalName>cloud-servant</finalName>
-                    <archive>
-                        <manifest>
-                            <mainClass>main.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <appendAssemblyId>false</appendAssemblyId>
-                </configuration>
-            </plugin>
-            <plugin>
-              <!-- Build an executable JAR -->
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <version>3.1.0</version>
-              <configuration>
-                <archive>
-                  <manifest>
-<!--                     <addClasspath>true</addClasspath> -->
-<!--                     <classpathPrefix>lib/</classpathPrefix> -->
-                    <mainClass>main.Main</mainClass>
-                  </manifest>
-                </archive>
-              </configuration>
-            </plugin>
-        </plugins>    
-    </build>
-    <profiles>
+	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<testSourceDirectory>test</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+			<!-- download source code in Eclipse, best practice -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<downloadSources>true</downloadSources>
+					<downloadJavadocs>false</downloadJavadocs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<finalName>jpeg-decoder</finalName>
+					<archive>
+						<manifest>
+							<mainClass>main.Main</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin>
+			<plugin>
+				<!-- Build an executable JAR -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<!-- <addClasspath>true</addClasspath> -->
+							<!-- <classpathPrefix>lib/</classpathPrefix> -->
+							<mainClass>main.Main</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<profiles>
 		<profile>
 			<id>test</id>
 			<properties>
 				<log>C:\endava\workspace\jpeg-decoder\logs\</log>
 				<input-path>C:\endava\workspace\jpeg-decoder\input</input-path>
 				<output-path>C:\endava\workspace\jpeg-decoder\output</output-path>
-				<tmp-path>C:\endava\workspace\jpeg-decoder\tmp</tmp-path>
+				<tmp-path>C:\endava\workspace\jpeg-decoder\tmp\</tmp-path>
 			</properties>
 		</profile>
 		<profile>
@@ -85,27 +86,27 @@
 				<log>/media/pi/seagate/repo-min/.logs/</log>
 				<input-path>/media/pi/seagate/repo/photo/2019/zurich_03</input-path>
 				<output-path>/media/pi/seagate/repo-min/photo-min</output-path>
-				<tmp-path>/media/pi/seagate/repo-min/.tmp</tmp-path>
+				<tmp-path>/media/pi/seagate/repo-min/.tmp/</tmp-path>
 			</properties>
 		</profile>
 	</profiles>
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.0.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.7</version>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.0.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.7</version>
+		</dependency>
+	</dependencies>
 </project>

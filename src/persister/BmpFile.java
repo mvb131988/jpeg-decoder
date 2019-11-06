@@ -1,7 +1,12 @@
 package persister;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class BmpFile {
 
+	private static Logger logger = LogManager.getRootLogger();
+	
 	BmpFileHeader header;
 	Pixel[][] pixels;
 
@@ -24,6 +29,10 @@ public class BmpFile {
 		int i = 0;
 
 		for (int j = pixels.length - 1; j >= 0; j--) {
+			
+			logger.info("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
+					   " Total memory" + (Runtime.getRuntime().totalMemory())/1_000_000);
+			
 			for (Pixel p : pixels[j]) {
 				b[i++] = (byte) p.b;
 				b[i++] = (byte) p.g;

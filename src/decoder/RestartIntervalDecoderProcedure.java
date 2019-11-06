@@ -2,12 +2,17 @@ package decoder;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import markers.Image;
 import util.BufferedReader;
 import util.FileSystemMCUWriter;
 
 public class RestartIntervalDecoderProcedure {
 
+	private static Logger logger = LogManager.getRootLogger();
+	
     private MCUDecoderProcedure dp = new MCUDecoderProcedure();
     
     private MCUsFlattener msf = new MCUsFlattener();
@@ -28,9 +33,13 @@ public class RestartIntervalDecoderProcedure {
         
         int numberOfMcu = nX*nY;
         
+        logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+        
         try(FileSystemMCUWriter fsmw = new FileSystemMCUWriter()) {
         	decodeRestartIntervalInternally(br, dc, fsmw, numberOfMcu);
         }
+        
+        logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         
         return msf.flattenMCUs(numberOfMcu, dc);
     }

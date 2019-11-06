@@ -2,6 +2,9 @@ package decoder;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import markers.FrameHeader;
 import markers.Image;
 import util.FileSystemMCUReader;
@@ -14,6 +17,8 @@ import util.FileSystemMCUReader;
  */
 public class MCUsFlattener {
 
+	private static Logger logger = LogManager.getRootLogger();
+	
 	public Image flattenMCUs(int numberOfMcu, DecoderContext dc) throws IOException {
 		//number of dus in MCU 
         int numberOfDu = 0;
@@ -24,8 +29,8 @@ public class MCUsFlattener {
         	samples = flattenMCUsInternally(numberOfMcu, fsmr, dc);
         }
         
-    	System.out.println("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
-		   " Total memory" + (Runtime.getRuntime().totalMemory())/1_000_000);
+        logger.info("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
+		   " Total memory"  + (Runtime.getRuntime().totalMemory())/1_000_000);
         
         return new Image(samples, dc.frameHeader.Hs, dc.frameHeader.Vs); 
 	}
@@ -69,7 +74,7 @@ public class MCUsFlattener {
                     cas[i].add(mcu[duI++]);
                     sizes[i]--;
                 }
-            //System.out.println("MCU: " + mcuI + " is processed");
+            logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         }
         
         int[][][] samples = new int[nComponents][][];
@@ -139,7 +144,7 @@ public class MCUsFlattener {
         
         /**
          * Adds data unit(8x8 block of samples) to the resulting samples two dimensional array
-         * relative to the insertion point(coordinates relative to 0,0 sample that gives staring point
+         * relative to the insertion point(coordinates relative to 0,0 sample that gives starting point
          * of insertion)
          * 
          * Note: Method eliminates padding samples and padding data units. 
@@ -147,7 +152,7 @@ public class MCUsFlattener {
          *       (1) Some of the samples from most right and most bottom du are used for padding. Procedure
          *           of du traversing within MCU remains the same as for any regular MCU, 
          *           just some of the samples within it are ignored
-         *       (2) The entire du within MCU is used for padding. Similar to 1 all samples from this
+         *       (2) The entire du within MCU is used for padding. Similarly to 1 all samples from this
          *           du are ignored, but what is the most important there are no more MCUs to the right or
          *           to the bottom(that if they existed shoud've been entirely from padding samples, would
          *           've been ignored by condition this.columnPos >= xs and would've considered as first 
