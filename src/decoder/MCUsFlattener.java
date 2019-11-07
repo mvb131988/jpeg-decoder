@@ -52,12 +52,14 @@ public class MCUsFlattener {
         int[] xs = dc.dimensionsContext.Xs;
         //original(no extensions) number of samples in a column per component
         int[] ys = dc.dimensionsContext.Ys;
+        //extended number of data units in a data units row 
+        int[] duXs = dc.dimensionsContext.extXDataUnit;
         
-        ComponentAssembler[] cas = new ComponentAssembler[nComponents];
-        for(int i=0; i<nComponents; i++) cas[i] = new ComponentAssembler(xs[i], 
-                                                                         ys[i],
-                                                                         dc.frameHeader.Hs[i],
-                                                                         dc.frameHeader.Vs[i]);
+        ComponentInFileSystemAssembler[] cas = new ComponentInFileSystemAssembler[nComponents];
+        for(int i=0; i<nComponents; i++) cas[i] = new ComponentInFileSystemAssembler(i,
+                                                                         			 dc.frameHeader.Hs[i],
+                                                                         			 dc.frameHeader.Vs[i],
+                                                                         			 duXs[i]);
         
         FrameHeader fh = dc.frameHeader;
         
@@ -77,9 +79,11 @@ public class MCUsFlattener {
             logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         }
         
+        //TODO: do not hold all samples of all(3) components in memory any more
+        //change return type to void and remove below code
         int[][][] samples = new int[nComponents][][];
         
-        for(int i=0; i<nComponents; i++) samples[i] = cas[i].samples;
+        for(int i=0; i<nComponents; i++) samples[i] = null;
         
         return samples;
     } 
