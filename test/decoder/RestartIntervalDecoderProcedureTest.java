@@ -5,6 +5,7 @@ import util.BufferedReader;
 import java.io.IOException;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -17,6 +18,7 @@ import markers.ScanHeader;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when; 
 
+@Ignore
 public class RestartIntervalDecoderProcedureTest {
 
     private RestartIntervalDecoderProcedure ridp;

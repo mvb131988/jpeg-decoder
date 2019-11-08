@@ -1,5 +1,9 @@
 package decoder;
 
+import java.io.IOException;
+
+import util.FileSystemDUWriter;
+
 /**
  * Accumulates all MCUs of a specific component and transforms them into two dimensional 
  * array of samples(position of samples corresponds to final pixel positions with respect 
@@ -10,7 +14,7 @@ package decoder;
  * Note: Here by MCU is defined component related part of decoded MCU(for example MCU could contain 
  * 6 DUs: 4DUs from component1, 1DU from component2, 1DU from component3) 
  */
-public class ComponentInFileSystemAssembler {
+public class ComponentInFileSystemAssembler implements AutoCloseable {
 
 	//assembler id, used for temporary file names generation(is equal to component id {0,1,2})
 	private int id;
@@ -31,7 +35,9 @@ public class ComponentInFileSystemAssembler {
     //number of MCUs(number of MCU columns) in a row
     private int mcuHs;
     
-    public ComponentInFileSystemAssembler(int id, int hs, int vs, int mcuHs) {
+    private FileSystemDUWriter[] fsduws;
+    
+    public ComponentInFileSystemAssembler(int id, int hs, int vs, int mcuHs) throws IOException {
         this.id = id;
     	this.hs = hs;
         this.vs = vs;
@@ -39,6 +45,10 @@ public class ComponentInFileSystemAssembler {
         this.duRead = 0;
         this.totalMcuRead = 0;
         this.mcuHs = mcuHs;
+        
+        this.fsduws = new FileSystemDUWriter[vs];
+        for(int i=0; i<vs; i++) 
+        	this.fsduws[i] = new FileSystemDUWriter(id, i);
     }
     
     /**
@@ -115,8 +125,9 @@ public class ComponentInFileSystemAssembler {
      * Files ordering from 1 to 8.
      * 
      * @param du
+     * @throws IOException 
      */
-    public void add(int[][] du) {
+    public void add(int[][] du) throws IOException {
     	//move to next MCU
     	if(duRead == vs*hs) {
     		duRead = 0; 
@@ -129,9 +140,15 @@ public class ComponentInFileSystemAssembler {
     	}
     	
     	int fileNumber = duRead/hs; 
-    	//TODO: add du into fileNumber file
+    	//save du into fileNumber file
+    	fsduws[fileNumber].write(du);
     	
     	duRead++;
     }
+
+	@Override
+	public void close() throws Exception {
+		for(FileSystemDUWriter fsduw: this.fsduws) fsduw.close();
+	}
     
 }
