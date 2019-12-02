@@ -23,7 +23,7 @@ public class ScanDecoderProcedureTest {
     }
     
     @Test
-    public void testDecodeFrame() throws IOException {
+    public void testDecodeFrame() throws Exception {
         //scan header(without 0xff 0xda)
         int[] input = {0x00,0x0c,0x03,0x01,0x00,0x02,0x11,0x03,0x11,0x00,0x3f,0x00,0xf2,
                        0xaa};

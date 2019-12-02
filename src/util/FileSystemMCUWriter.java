@@ -25,7 +25,7 @@ public class FileSystemMCUWriter implements AutoCloseable {
 		Path p = Paths.get(AppProperties.getTmpPath() + "mcus");
 		Files.deleteIfExists(p);
 		Files.createFile(p);
-		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE));
+		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE), 262_144);
 	}
 	
 	/**

@@ -52,11 +52,10 @@ public class RestartIntervalDecoderProcedureTest {
      * 
      * Image would consist of 4 MCUs, each MCU of 4 du's from the 1't component, 1 du from the 2'd component
      * and 1 du from the 3'd component
-     * 
-     * @throws IOException 
+     * @throws Exception 
      */
     @Test
-    public void testDecodeRestartInterval() throws IOException {
+    public void testDecodeRestartInterval() throws Exception {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // input
         

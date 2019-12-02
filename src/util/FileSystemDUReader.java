@@ -26,8 +26,8 @@ public class FileSystemDUReader implements AutoCloseable {
 		this.componentId = componentId;
 		this.rowNumber = rowNumber;
 		
-		p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId + "row_" + rowNumber);
-		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ));
+		p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId + "_row_" + rowNumber);
+		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ), 262_144);
 	}
 	
 	/**

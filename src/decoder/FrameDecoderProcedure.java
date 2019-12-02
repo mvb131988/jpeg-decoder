@@ -23,9 +23,9 @@ public class FrameDecoderProcedure {
     /**
      * 
      * @param br - is set to the first frame header bit(frame header marker already processed) 
-     * @throws IOException 
+     * @throws Exception 
      */
-    public Image decodeFrame(BufferedReader br, DecoderContext dc) throws IOException {
+    public Image decodeFrame(BufferedReader br, DecoderContext dc) throws Exception {
         int[] fs = new int[2]; fs[0] = br.next(); fs[1] = br.next();
         int frameSize = (fs[0] << 8) + fs[1];
         

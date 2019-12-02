@@ -17,7 +17,7 @@ public class RestartIntervalDecoderProcedure {
     
     private MCUsFlattener msf = new MCUsFlattener();
     
-    public Image decodeRestartInterval(BufferedReader br, DecoderContext dc) throws IOException {
+    public Image decodeRestartInterval(BufferedReader br, DecoderContext dc) throws Exception {
         //Init PRED value of DC coefficient for each component
         //Preserve components order in scan header
         dc.initPredDC();

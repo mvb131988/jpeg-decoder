@@ -10,7 +10,7 @@ public class ScanDecoderProcedure {
 
     private RestartIntervalDecoderProcedure ridp = new RestartIntervalDecoderProcedure();
     
-    public Image decodeScan(BufferedReader br, DecoderContext dc) throws IOException {
+    public Image decodeScan(BufferedReader br, DecoderContext dc) throws Exception {
         int[] ss = new int[2]; ss[0] = br.next(); ss[1] = br.next();
         int scanSize = (ss[0] << 8) + ss[1];
         

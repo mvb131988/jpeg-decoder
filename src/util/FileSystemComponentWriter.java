@@ -10,32 +10,31 @@ import java.nio.file.StandardOpenOption;
 
 import main.AppProperties;
 
-public class FileSystemDUWriter implements AutoCloseable {
-	
+/**
+ * Writes samples rows row by row in the resulting component file.
+ */
+public class FileSystemComponentWriter implements AutoCloseable {
+
 	private OutputStream os;
 	
 	//component serial number(value from {0,1,2})
 	private int componentId;
 	
-	//serial number of DU row within MCU (starts with 0)
-	private int rowNumber;
-	
-	public FileSystemDUWriter(int componentId, int rowNumber) throws IOException {
+	public FileSystemComponentWriter(int componentId) throws IOException {
 		this.componentId = componentId;
-		this.rowNumber = rowNumber;
 		
 		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
 		
-		Path p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId + "_row_" + rowNumber);
+		Path p = Paths.get(AppProperties.getTmpPath() + 
+						   "component_" + componentId);
 		Files.deleteIfExists(p);
 		Files.createFile(p);
+		
 		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE), 262_144);
 	}
 	
-	public void write(int[][] du) throws IOException {
-		for(int[] row: du)
-			for(int column: row) 
-				os.write(column);	
+	public void write(int sample) throws IOException {
+		os.write(sample);
 	}
 	
 	@Override

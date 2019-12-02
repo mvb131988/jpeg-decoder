@@ -2,7 +2,11 @@ package decoder;
 
 import java.io.IOException;
 
+import util.FileSystemComponentWriter;
+import util.FileSystemDUReader;
 import util.FileSystemDUWriter;
+import util.FileSystemRowReader;
+import util.FileSystemRowWriter;
 
 /**
  * Accumulates all MCUs of a specific component and transforms them into two dimensional 
@@ -12,12 +16,19 @@ import util.FileSystemDUWriter;
  * During transformation series of temporary files is used to minimize memory(RAM) consumption.
  * 
  * Note: Here by MCU is defined component related part of decoded MCU(for example MCU could contain 
- * 6 DUs: 4DUs from component1, 1DU from component2, 1DU from component3) 
+ * 6 DUs: 4DUs from component1(would be named as MCU, however not the entire, but just component1 specific part), 
+ * 1DU from component2, 1DU from component3) 
  */
 public class ComponentInFileSystemAssembler implements AutoCloseable {
 
 	//assembler id, used for temporary file names generation(is equal to component id {0,1,2})
 	private int id;
+
+	//original(no extensions) number of samples in a row per component 
+	private int xs;
+	
+	//original(no extensions) number of samples in a column per component
+	private int ys;
 	
     //horizontal sampling factor(number of DU columns in MCUs part of this component)
     private int hs;
@@ -35,20 +46,39 @@ public class ComponentInFileSystemAssembler implements AutoCloseable {
     //number of MCUs(number of MCU columns) in a row
     private int mcuHs;
     
+    //number of DUs in a DU row including padding
+	private int extDuCount;
+	
+	//number of samples in a component row including padding
+	private int extSamplesCount;
+	
+	//number of entire rows(the whole row of the component) that are already written
+	//in the component/result file
+	private int rowCount;
+	
     private FileSystemDUWriter[] fsduws;
     
-    public ComponentInFileSystemAssembler(int id, int hs, int vs, int mcuHs) throws IOException {
+    private FileSystemComponentWriter fscw;
+    
+    public ComponentInFileSystemAssembler(int id, int hs, int vs, int xs, int ys, int mcuHs) throws IOException {
         this.id = id;
+        this.xs = xs;
+        this.ys = ys;
     	this.hs = hs;
         this.vs = vs;
         
         this.duRead = 0;
         this.totalMcuRead = 0;
         this.mcuHs = mcuHs;
+        this.extDuCount = mcuHs*hs;
+        this.extSamplesCount = extDuCount*8;
+        this.rowCount = 0;
         
         this.fsduws = new FileSystemDUWriter[vs];
         for(int i=0; i<vs; i++) 
         	this.fsduws[i] = new FileSystemDUWriter(id, i);
+        
+        this.fscw = new FileSystemComponentWriter(id);
     }
     
     /**
@@ -125,30 +155,82 @@ public class ComponentInFileSystemAssembler implements AutoCloseable {
      * Files ordering from 1 to 8.
      * 
      * @param du
-     * @throws IOException 
+     * @throws Exception 
      */
-    public void add(int[][] du) throws IOException {
+    public void add(int[][] du) throws Exception {
+    	int fileNumber = duRead/hs; 
+    	//save du into fileNumber file
+    	fsduws[fileNumber].write(du);
+    	
+    	duRead++;
+    	
     	//move to next MCU
     	if(duRead == vs*hs) {
     		duRead = 0; 
     		totalMcuRead++;
     		//end of MCU row is reached
     		if(mcuHs == totalMcuRead) {
-    			//TODO: merge DU rows
+    			//merge DU rows
+    			unifyComponents();
+    			
     			totalMcuRead = 0;
     		}
     	}
+    }
+    
+    private void unifyComponents() throws Exception {
+    	//end write process
+    	for(FileSystemDUWriter fsduw: fsduws) fsduw.close();
     	
-    	int fileNumber = duRead/hs; 
-    	//save du into fileNumber file
-    	fsduws[fileNumber].write(du);
+    	//read DU rows(DU row by DU row), break up each DU into a separate line,
+    	//save each line into corresponding file. When DU row end is reached, 
+    	//merge each line into the result file(corresponds to component)
+    	for(int i=0; i<vs; i++) {
+    		FileSystemDUReader fsdur = new FileSystemDUReader(id, i);
+    		
+    		FileSystemRowWriter[] fsrws = new FileSystemRowWriter[8];
+    		for(int l=0; l<8; l++) 
+    			fsrws[l] = new FileSystemRowWriter(id, i, l, extSamplesCount);
+    		
+    		for(int j=0; j<extDuCount; j++) {
+    			int[][] du = fsdur.read();
+    			for(int k=0; k<8; k++)
+    				fsrws[k].write(du[k]);
+    		}
+    		
+    		for(int l=0; l<8; l++) fsrws[l].close();
+    		fsdur.close();
+    		
+    		//at this moment 8 files, correspondent to each DU line, are created
+    		//need to be merged into the result file
+    		FileSystemRowReader[] fsrrs = new FileSystemRowReader[8];
+    		for(int l=0; l<8; l++) 
+    			fsrrs[l] = new FileSystemRowReader(id, i, l, this.xs);
+    		
+    		for(int l=0; l<8; l++) {
+    			if(rowCount < ys) {
+	    			//samples of the current row already written so far 
+	    			int sCount = 0;
+	    			while(sCount<xs) {
+	    				this.fscw.write(fsrrs[l].read());
+	    				sCount++;
+	    			}
+	    			rowCount++;
+    			}
+    		} 
+    		
+    		for(int l=0; l<8; l++) fsrrs[l].close();
+    	}
     	
-    	duRead++;
+    	//resume write process
+    	for(int i=0; i<vs; i++) 
+        	this.fsduws[i] = new FileSystemDUWriter(id, i);
     }
 
 	@Override
 	public void close() throws Exception {
 		for(FileSystemDUWriter fsduw: this.fsduws) fsduw.close();
+		this.fscw.close();
 	}
     
 }
