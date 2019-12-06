@@ -3,7 +3,6 @@ package decoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import debug.ComponentRestoreProcedure;
 import markers.FrameHeader;
 import markers.Image;
 import util.FileSystemMCUReader;
@@ -88,10 +87,10 @@ public class MCUsFlattener {
         //change return type to void and remove below code
         int[][][] samples = new int[nComponents][][];
         
-        for(int i=0; i<nComponents; i++) samples[i] = null;
-        
-        ComponentRestoreProcedure crp = new ComponentRestoreProcedure();
-        samples = crp.restore(dc);
+//        for(int i=0; i<nComponents; i++) samples[i] = null;
+//        
+//        ComponentRestoreProcedure crp = new ComponentRestoreProcedure();
+//        samples = crp.restore(dc);
         
         //TODO: restore components for testing purpose only
         //		put it in debug package 

@@ -84,5 +84,13 @@ public class RestartIntervalDecoderProcedure {
     public void setDp(MCUDecoderProcedure dp) {
         this.dp = dp;
     }
+
+	public MCUsFlattener getMsf() {
+		return msf;
+	}
+
+	public void setMsf(MCUsFlattener msf) {
+		this.msf = msf;
+	}
     
 }

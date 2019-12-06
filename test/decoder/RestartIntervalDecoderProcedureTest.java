@@ -1,11 +1,10 @@
 package decoder;
 
-import util.BufferedReader;
-
-import java.io.IOException;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -14,22 +13,24 @@ import org.mockito.stubbing.Answer;
 import markers.FrameHeader;
 import markers.Image;
 import markers.ScanHeader;
+import util.BufferedReader;
+import util.FileSystemMCUReader; 
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when; 
-
-@Ignore
 public class RestartIntervalDecoderProcedureTest {
 
     private RestartIntervalDecoderProcedure ridp;
     
     private MCUDecoderProcedure dp;
     
+    private MCUsFlattener msf;
+    
     @Before
     public void init() {
         dp = Mockito.mock(MCUDecoderProcedure.class);
+        msf = Mockito.mock(MCUsFlattener.class);
         ridp = new RestartIntervalDecoderProcedure();
         ridp.setDp(dp);
+        ridp.setMsf(msf);
     }
     
     /**
@@ -94,6 +95,7 @@ public class RestartIntervalDecoderProcedureTest {
         fh.Vs = Vs;
         
         ScanHeader sh = new ScanHeader();
+        sh.Ns = 3;
         sh.Cs = new int[] {1, 2, 3};
         
         DecoderContext dc = new DecoderContext();
@@ -144,64 +146,21 @@ public class RestartIntervalDecoderProcedureTest {
         /////////////////////////////////////////////////////////////////////////////////////////////////////
         // asserts
         
-        //samples for component 1
-        int[][] samples1 = 
-        {{1,   2,  3,  4,  5,  6,  7,  8, 1,   2,  3,  4,  5,  6,  7,  8, 1,   2},
-         {9,  10, 11, 12, 13, 14, 15, 16, 9,  10, 11, 12, 13, 14, 15, 16, 9,  10},
-         {17, 18, 19, 20, 21, 22, 23, 24, 17, 18, 19, 20, 21, 22, 23, 24, 17, 18},
-         {25, 26, 27, 28, 29, 30, 31, 32, 25, 26, 27, 28, 29, 30, 31, 32, 25, 26}, 
-         {33, 34, 35, 36, 37, 38, 39, 40, 33, 34, 35, 36, 37, 38, 39, 40, 33, 34},
-         {41, 42, 43, 44, 45, 46, 47, 48, 41, 42, 43, 44, 45, 46, 47, 48, 41, 42},
-         {49, 50, 51, 52, 53, 54, 55, 56, 49, 50, 51, 52, 53, 54, 55, 56, 49, 50},
-         {57, 58, 59, 60, 61, 62, 63, 64, 57, 58, 59, 60, 61, 62, 63, 64, 57, 58},
-         {1,   2,  3,  4,  5,  6,  7,  8, 1,   2,  3,  4,  5,  6,  7,  8, 1,   2},
-         {9,  10, 11, 12, 13, 14, 15, 16, 9,  10, 11, 12, 13, 14, 15, 16, 9,  10},
-         {17, 18, 19, 20, 21, 22, 23, 24, 17, 18, 19, 20, 21, 22, 23, 24, 17, 18},
-         {25, 26, 27, 28, 29, 30, 31, 32, 25, 26, 27, 28, 29, 30, 31, 32, 25, 26}, 
-         {33, 34, 35, 36, 37, 38, 39, 40, 33, 34, 35, 36, 37, 38, 39, 40, 33, 34},
-         {41, 42, 43, 44, 45, 46, 47, 48, 41, 42, 43, 44, 45, 46, 47, 48, 41, 42},
-         {49, 50, 51, 52, 53, 54, 55, 56, 49, 50, 51, 52, 53, 54, 55, 56, 49, 50},
-         {57, 58, 59, 60, 61, 62, 63, 64, 57, 58, 59, 60, 61, 62, 63, 64, 57, 58},
-         {1,   2,  3,  4,  5,  6,  7,  8, 1,   2,  3,  4,  5,  6,  7,  8, 1,   2},
-         {9,  10, 11, 12, 13, 14, 15, 16, 9,  10, 11, 12, 13, 14, 15, 16, 9,  10},
-         {17, 18, 19, 20, 21, 22, 23, 24, 17, 18, 19, 20, 21, 22, 23, 24, 17, 18},
-         {25, 26, 27, 28, 29, 30, 31, 32, 25, 26, 27, 28, 29, 30, 31, 32, 25, 26}};
+        //read 4 MCUs
+        FileSystemMCUReader fsmr = new FileSystemMCUReader(6);
+        for(int m=0; m<4; m++) {
+	        int[][][] mcu = fsmr.read();
+	        assertEquals(6, mcu.length);
+	        for(int i=0; i<6; i++) {
+	        	int sample = 1;
+	        	for(int j=0; j<8; j++)
+	        		for(int k=0; k<8; k++)
+	        			assertEquals(sample++, mcu[i][j][k]);
+	        }
+        }
         
-        //samples for component 2, 3
-        int[][] samples23 = 
-        {{1,   2,  3,  4,  5,  6,  7,  8, 1}, 
-         {9,  10, 11, 12, 13, 14, 15, 16, 9},
-         {17, 18, 19, 20, 21, 22, 23, 24, 17}, 
-         {25, 26, 27, 28, 29, 30, 31, 32, 25}, 
-         {33, 34, 35, 36, 37, 38, 39, 40, 33}, 
-         {41, 42, 43, 44, 45, 46, 47, 48, 41},
-         {49, 50, 51, 52, 53, 54, 55, 56, 49},
-         {57, 58, 59, 60, 61, 62, 63, 64, 57},
-         {1,   2,  3,  4,  5,  6,  7,  8, 1},
-         {9,  10, 11, 12, 13, 14, 15, 16, 9}};
-        
-        assertEquals(3, img.samples.length);
-        assertEquals(Hs, img.Hs);
-        assertEquals(Vs, img.Vs);
-        
-        assertEquals(samples1.length, img.samples[0].length);
-        assertEquals(samples1[0].length, img.samples[0][0].length);
-        for(int i=0; i<img.samples[0].length; i++)
-            for(int j=0; j<img.samples[0][0].length; j++)
-                assertEquals(samples1[i][j], img.samples[0][i][j]);
-        
-        assertEquals(samples23.length, img.samples[1].length);
-        assertEquals(samples23[0].length, img.samples[1][0].length);
-        for(int i=0; i<img.samples[1].length; i++)
-            for(int j=0; j<img.samples[1][0].length; j++)
-                assertEquals(samples1[i][j], img.samples[1][i][j]);
-        
-        assertEquals(samples23.length, img.samples[2].length);
-        assertEquals(samples23[0].length, img.samples[2][0].length);
-        for(int i=0; i<img.samples[2].length; i++)
-            for(int j=0; j<img.samples[2][0].length; j++)
-                assertEquals(samples1[i][j], img.samples[2][i][j]);
-        /////////////////////////////////////////////////////////////////////////////////////////////////////
-    }
+		assertArrayEquals(null, fsmr.read());
+		fsmr.close();
+	}
     
 }

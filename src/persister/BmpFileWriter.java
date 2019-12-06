@@ -12,12 +12,17 @@ import java.nio.file.attribute.BasicFileAttributes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import decoder.DecoderContext;
 import decoder.DecoderControlProcedure;
 import markers.Image;
+import util.ComponentExpander;
+import util.FileSystemPixelConverter;
 
 public class BmpFileWriter {
     
 	private static Logger logger = LogManager.getRootLogger();
+	
+	private ComponentExpander ce = new ComponentExpander();
 	
     /**
      * 
@@ -91,10 +96,17 @@ public class BmpFileWriter {
 					//bmp file relative path including file name
 					Path rpBmp = bmpRelativePath(file);
 					try {
+						DecoderContext dc = new DecoderContext();
 						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
-						Image img = dcp.decodeImage();
-						PixelConverter pc = new PixelConverter(); 
-						Pixel[][] pixels = pc.scale(pc.convert(img));
+						Image img = dcp.decodeImage(dc);
+						
+						writer.ce.extend(dc);
+						
+						FileSystemPixelConverter fspc = new FileSystemPixelConverter();
+						Pixel[][] pixels = fspc.convert(dc);
+						
+						pixels = new PixelConverter().scale(pixels);
+//						Pixel[][] pixels = pc.scale(pc.convert(img));
 						
 						writer.write(outputRoot, 
 									 rpBmp.getParent() == null ? Paths.get("") : rpBmp.getParent(), 

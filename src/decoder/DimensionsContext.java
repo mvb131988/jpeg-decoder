@@ -27,6 +27,8 @@ public class DimensionsContext {
     public int[] finalExtXs;
     public int[] finalExtYs;
     
+    public DimensionsContext() {}
+    		
     public DimensionsContext(int[] xs, 
                              int[] ys, 
                              int[] extXs, 

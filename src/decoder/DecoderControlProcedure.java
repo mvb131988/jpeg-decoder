@@ -47,8 +47,8 @@ public class DecoderControlProcedure {
         br = new BufferedReader(is);
     }
     
-    public Image decodeImage() throws Exception {
-        Image img = decodeImageInternally(new DecoderContext());
+    public Image decodeImage(DecoderContext dc) throws Exception {
+        Image img = decodeImageInternally(dc);
         br.close();
         
         return img;

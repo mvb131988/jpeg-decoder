@@ -12,6 +12,7 @@ import main.AppProperties;
 
 public class FileSystemMCUReader implements AutoCloseable {
 	
+	//number of DUs in a single MCU
 	private int duN;
 	
 	private InputStream is;
@@ -27,15 +28,17 @@ public class FileSystemMCUReader implements AutoCloseable {
 	
 	/**
 	 * 
-	 * @return
+	 * @return fully populated MCU or null if during read EOF occurs
 	 * @throws IOException 
 	 */
 	public int[][][] read() throws IOException {
 		int[][][] mcu = new int[duN][8][8];
 		for(int i=0; i<mcu.length; i++)
 			for(int j=0; j<8; j++)
-				for(int k=0; k<8; k++)
+				for(int k=0; k<8; k++) {
 					mcu[i][j][k] = is.read();
+					if(mcu[i][j][k] == -1) return null;
+				}
 		return mcu;
 	}
 	
