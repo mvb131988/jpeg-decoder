@@ -16,13 +16,16 @@ import decoder.DecoderContext;
 import decoder.DecoderControlProcedure;
 import markers.Image;
 import util.ComponentExpander;
-import util.FileSystemPixelConverter;
+import util.ComponentRotator;
+import util.FileSystemBmpAssembler;
 
-public class BmpFileWriter {
+public class JpegsProcessingProcedure {
     
 	private static Logger logger = LogManager.getRootLogger();
 	
 	private ComponentExpander ce = new ComponentExpander();
+	
+	private ComponentRotator cr = new ComponentRotator();
 	
     /**
      * 
@@ -69,13 +72,13 @@ public class BmpFileWriter {
      */
     private static class JpegFilesVisitor implements FileVisitor<Path> {
 
-    	private BmpFileWriter writer;
+    	private JpegsProcessingProcedure writer;
     	
     	private Path inputRoot;
     	
     	private Path outputRoot;
     	
-    	public JpegFilesVisitor(BmpFileWriter writer, Path inputRoot, Path outputRoot) {
+    	public JpegFilesVisitor(JpegsProcessingProcedure writer, Path inputRoot, Path outputRoot) {
     		this.writer = writer;
     		this.inputRoot = inputRoot;
     		this.outputRoot = outputRoot;
@@ -102,8 +105,8 @@ public class BmpFileWriter {
 						
 						writer.ce.extend(dc);
 						
-						FileSystemPixelConverter fspc = new FileSystemPixelConverter();
-						Pixel[][] pixels = fspc.convert(dc);
+						FileSystemBmpAssembler fsba= new FileSystemBmpAssembler();
+						Pixel[][] pixels = fsba.convert(dc, rpBmp.getFileName().toString());
 						
 						pixels = new PixelConverter().scale(pixels);
 //						Pixel[][] pixels = pc.scale(pc.convert(img));

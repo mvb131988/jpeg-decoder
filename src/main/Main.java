@@ -2,7 +2,7 @@ package main;
 
 import java.nio.file.Paths;
 
-import persister.BmpFileWriter;
+import persister.JpegsProcessingProcedure;
 
 //https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 //https://www.ece.ucdavis.edu/cerl/reliablejpeg/compression/
@@ -15,6 +15,6 @@ public class Main {
     	//of jpeg transformation, found in inputPath)
     	String outputPath = AppProperties.getOutputPath();
     	
-    	new BmpFileWriter().writeAll(Paths.get(inputPath), Paths.get(outputPath));
+    	new JpegsProcessingProcedure().writeAll(Paths.get(inputPath), Paths.get(outputPath));
     }
 }
