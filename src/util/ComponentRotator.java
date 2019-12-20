@@ -32,17 +32,17 @@ public class ComponentRotator {
 		}
 		
 		//replace extended component file
-		try(FileSystemExtendedComponentWriter fsecw = new FileSystemExtendedComponentWriter(index)) {
-			for(int i=y-1; i>=0; i--) {
-				//read lines in reverse order (lineN - line0)
-				try(FileSystemReverseOrderRowReader fsrorr = new FileSystemReverseOrderRowReader(index, i)) {
-					for(int j=0; j<x; j++) {
-						int sample = fsrorr.read();
-						fsecw.write(sample);
-					}
-				}
-			}
-		}
+//		try(FileSystemExtendedComponentWriter fsecw = new FileSystemExtendedComponentWriter(index)) {
+//			for(int i=y-1; i>=0; i--) {
+//				//read lines in reverse order (lineN - line0)
+//				try(FileSystemReverseOrderRowReader fsrorr = new FileSystemReverseOrderRowReader(index, i)) {
+//					for(int j=0; j<x; j++) {
+//						int sample = fsrorr.read();
+//						fsecw.write(sample);
+//					}
+//				}
+//			}
+//		}
 	}
 	
 }

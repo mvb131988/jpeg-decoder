@@ -19,6 +19,7 @@ import util.ComponentExpander;
 import util.ComponentRotator;
 import util.ComponentSquasher;
 import util.FileSystemBmpAssembler;
+import util.TmpDirManager;
 
 public class JpegsProcessingProcedure {
     
@@ -29,6 +30,12 @@ public class JpegsProcessingProcedure {
 	private ComponentRotator cr = new ComponentRotator();
 	
 	private ComponentSquasher cs = new ComponentSquasher();
+	
+	private TmpDirManager tmpDirManager = new TmpDirManager();
+	
+	public JpegsProcessingProcedure() throws IOException {
+		tmpDirManager.init();
+	}
 	
     /**
      * 
@@ -94,6 +101,8 @@ public class JpegsProcessingProcedure {
 
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+			writer.tmpDirManager.clean();
+			
 			String fileName = file.getFileName().toString();
 			String extension = null; 
 			if(fileName.lastIndexOf(".") != -1) {
