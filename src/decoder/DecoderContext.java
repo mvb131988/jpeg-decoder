@@ -19,6 +19,9 @@ public class DecoderContext {
     public DimensionsContext dimensionsContext;
     public int[] predDcs;
     
+    public int minX;
+    public int minY;
+    
     /**
      * Init PRED value of DC coefficient for each component
      * Preserve components order in scan header

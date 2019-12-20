@@ -80,8 +80,8 @@ public class BmpFileHeader {
 	}
 	
 	public BmpFileHeader(DecoderContext dc) {
-		int height = dc.frameHeader.Y;
-		int width = dc.frameHeader.X;
+		int height = dc.minY;
+		int width = dc.minX;
 		
 		this.signature = 19778;
 		this.fileSize = height * width + IMAGE_DATA_OFFSET;

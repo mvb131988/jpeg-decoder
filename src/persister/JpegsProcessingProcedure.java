@@ -17,6 +17,7 @@ import decoder.DecoderControlProcedure;
 import markers.Image;
 import util.ComponentExpander;
 import util.ComponentRotator;
+import util.ComponentSquasher;
 import util.FileSystemBmpAssembler;
 
 public class JpegsProcessingProcedure {
@@ -26,6 +27,8 @@ public class JpegsProcessingProcedure {
 	private ComponentExpander ce = new ComponentExpander();
 	
 	private ComponentRotator cr = new ComponentRotator();
+	
+	private ComponentSquasher cs = new ComponentSquasher();
 	
     /**
      * 
@@ -104,17 +107,19 @@ public class JpegsProcessingProcedure {
 						Image img = dcp.decodeImage(dc);
 						
 						writer.ce.extend(dc);
+						writer.cr.rotate(dc);
+						writer.cs.squash(dc);
 						
 						FileSystemBmpAssembler fsba= new FileSystemBmpAssembler();
 						Pixel[][] pixels = fsba.convert(dc, rpBmp.getFileName().toString());
 						
-						pixels = new PixelConverter().scale(pixels);
+//						pixels = new PixelConverter().scale(pixels);
 //						Pixel[][] pixels = pc.scale(pc.convert(img));
 						
-						writer.write(outputRoot, 
-									 rpBmp.getParent() == null ? Paths.get("") : rpBmp.getParent(), 
-									 rpBmp.getFileName(), 
-									 pixels);
+//						writer.write(outputRoot, 
+//									 rpBmp.getParent() == null ? Paths.get("") : rpBmp.getParent(), 
+//									 rpBmp.getFileName(), 
+//									 pixels);
 
 						logger.info(file + " is processed");
 					} catch (Throwable th) {

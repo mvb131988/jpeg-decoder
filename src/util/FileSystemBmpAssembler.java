@@ -15,18 +15,18 @@ public class FileSystemBmpAssembler {
 	 */
 	public Pixel[][] convert(DecoderContext dc, String fileName) throws Exception {
 		//number of pixels per row
-		int width = dc.frameHeader.X;
+		int width = dc.minX;
 		int widthWithPadding = widthWithPadding(width);
 
 		//number of pixels per column
-		int height = dc.frameHeader.Y;
+		int height = dc.minY;
 		
 		//Pixel[][] rgbImage = new Pixel[height][width];
 
 		//only 3 components images are supported
-		FileSystemExtendedComponentReader[] fsecrs = new FileSystemExtendedComponentReader[3];
+		FileSystemSquashedComponentReader[] fsscrs = new FileSystemSquashedComponentReader[3];
 		//open component readers
-		for(int i=0; i<fsecrs.length; i++) fsecrs[i] = new FileSystemExtendedComponentReader(i);
+		for(int i=0; i<fsscrs.length; i++) fsscrs[i] = new FileSystemSquashedComponentReader(i);
 		
 		FileSystemBmpWriter fsbw = new FileSystemBmpWriter(fileName);
 		fsbw.writeHeader(new BmpFileHeader(dc));
@@ -35,9 +35,9 @@ public class FileSystemBmpAssembler {
 			for(int j=0; j<widthWithPadding; j++) {
 				Pixel p = new Pixel(0,0,0);
 				if(j<width) {
-					int y = fsecrs[0].read(); 
-	                int cb = fsecrs[1].read(); 
-	                int cr = fsecrs[2].read();
+					int y = fsscrs[0].read(); 
+	                int cb = fsscrs[1].read(); 
+	                int cr = fsscrs[2].read();
 	                
 	                p = pixel(y, cb, cr);
 				}
@@ -50,7 +50,7 @@ public class FileSystemBmpAssembler {
 		fsbw.close();
 		
 		//close component readers
-		for(int i=0; i<fsecrs.length; i++) fsecrs[i].close();
+		for(int i=0; i<fsscrs.length; i++) fsscrs[i].close();
 		
 		//return rgbImage;
 		return null;
