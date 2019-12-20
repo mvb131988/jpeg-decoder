@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import markers.Image;
 import util.BufferedReader;
 import util.FileSystemMCUWriter;
 
@@ -17,7 +16,7 @@ public class RestartIntervalDecoderProcedure {
     
     private MCUsFlattener msf = new MCUsFlattener();
     
-    public Image decodeRestartInterval(BufferedReader br, DecoderContext dc) throws Exception {
+    public void decodeRestartInterval(BufferedReader br, DecoderContext dc) throws Exception {
         //Init PRED value of DC coefficient for each component
         //Preserve components order in scan header
         dc.initPredDC();
@@ -41,7 +40,7 @@ public class RestartIntervalDecoderProcedure {
         
         logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         
-        return msf.flattenMCUs(numberOfMcu, dc);
+        msf.flattenMCUs(numberOfMcu, dc);
     }
 
 	private void decodeRestartIntervalInternally(BufferedReader br, 

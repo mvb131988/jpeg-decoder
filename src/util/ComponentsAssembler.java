@@ -4,10 +4,11 @@ import decoder.DecoderContext;
 import persister.BmpFileHeader;
 import persister.Pixel;
 
-public class FileSystemBmpAssembler {
+/**
+ * Combines 3 image components and produces bmp file as an output result. 
+ */
+public class ComponentsAssembler {
 
-	//TODO:scaling here
-	
 	/**
 	 * Takes three components that are currently in tmp dir and transforms
 	 * it in two dimensional array of RGB pixels
@@ -21,8 +22,6 @@ public class FileSystemBmpAssembler {
 		//number of pixels per column
 		int height = dc.minY;
 		
-		//Pixel[][] rgbImage = new Pixel[height][width];
-
 		//only 3 components images are supported
 		FileSystemSquashedComponentReader[] fsscrs = new FileSystemSquashedComponentReader[3];
 		//open component readers

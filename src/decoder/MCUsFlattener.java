@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import markers.FrameHeader;
-import markers.Image;
 import util.FileSystemMCUReader;
 
 /**
@@ -17,20 +16,17 @@ public class MCUsFlattener {
 
 	private static Logger logger = LogManager.getRootLogger();
 	
-	public Image flattenMCUs(int numberOfMcu, DecoderContext dc) throws Exception {
+	public void flattenMCUs(int numberOfMcu, DecoderContext dc) throws Exception {
 		//number of dus in MCU 
         int numberOfDu = 0;
         for (int j = 0; j < dc.frameHeader.Cs.length; j++) numberOfDu += dc.frameHeader.Vs[j] * dc.frameHeader.Hs[j];
         
-        int[][][] samples;
         try(FileSystemMCUReader fsmr = new FileSystemMCUReader(numberOfDu)) {
-        	samples = flattenMCUsInternally(numberOfMcu, fsmr, dc);
+        	flattenMCUsInternally(numberOfMcu, fsmr, dc);
         }
         
         logger.info("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
 		   " Total memory"  + (Runtime.getRuntime().totalMemory())/1_000_000);
-        
-        return new Image(samples, dc.frameHeader.Hs, dc.frameHeader.Vs); 
 	}
 	
 	/**
@@ -39,10 +35,9 @@ public class MCUsFlattener {
      * correct positions(index of each sample/partial value of a pixel in two dimensional array of the
      * largest image component corresponds to coordinates of the pixel in output bitmap image) 
      * 
-     * @return components(3 components) as two dimensional arrays
-	 * @throws Exception 
+     * As an output produces components(3 components) as two dimensional arrays
      */
-    private int[][][] flattenMCUsInternally(int numberOfMcu, FileSystemMCUReader fsmr, DecoderContext dc) throws Exception {
+    private void flattenMCUsInternally(int numberOfMcu, FileSystemMCUReader fsmr, DecoderContext dc) throws Exception {
         
         //number of components
         int nComponents = dc.frameHeader.Nf;   
@@ -82,23 +77,7 @@ public class MCUsFlattener {
         //close component writers(output/component files) in the end
         for(int i=0; i<nComponents; i++) cas[i].close();
         
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //TODO: do not hold all samples of all(3) components in memory any more
-        //change return type to void and remove below code
-        int[][][] samples = new int[nComponents][][];
-        
-//        for(int i=0; i<nComponents; i++) samples[i] = null;
-//        
-//        ComponentRestoreProcedure crp = new ComponentRestoreProcedure();
-//        samples = crp.restore(dc);
-        
-        //TODO: restore components for testing purpose only
-        //		put it in debug package 
-        
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        
         logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-        return samples;
     } 
     
     private static class ComponentAssembler {

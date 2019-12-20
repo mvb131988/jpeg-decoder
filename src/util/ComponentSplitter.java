@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import decoder.DecoderContext;
 
-public class ComponentRotator {
+/**
+ * Splits component file into rows of samples (1 file per 1 row)
+ */
+public class ComponentSplitter {
 
-	//use decoder context
 	public void rotate(DecoderContext dc) throws IOException, Exception {
 		//apply to ext_component_0, ext_component_1, ext_component_2
 		for(int i=0; i<3; i++) rotateComponent(i, dc);
@@ -30,19 +32,6 @@ public class ComponentRotator {
 				}
 			}
 		}
-		
-		//replace extended component file
-//		try(FileSystemExtendedComponentWriter fsecw = new FileSystemExtendedComponentWriter(index)) {
-//			for(int i=y-1; i>=0; i--) {
-//				//read lines in reverse order (lineN - line0)
-//				try(FileSystemReverseOrderRowReader fsrorr = new FileSystemReverseOrderRowReader(index, i)) {
-//					for(int j=0; j<x; j++) {
-//						int sample = fsrorr.read();
-//						fsecw.write(sample);
-//					}
-//				}
-//			}
-//		}
 	}
 	
 }

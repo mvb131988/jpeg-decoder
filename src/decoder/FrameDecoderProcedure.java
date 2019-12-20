@@ -5,7 +5,6 @@ import java.util.List;
 
 import markers.FrameHeader;
 import markers.HuffmanTableSpecification;
-import markers.Image;
 import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 
@@ -25,7 +24,7 @@ public class FrameDecoderProcedure {
      * @param br - is set to the first frame header bit(frame header marker already processed) 
      * @throws Exception 
      */
-    public Image decodeFrame(BufferedReader br, DecoderContext dc) throws Exception {
+    public void decodeFrame(BufferedReader br, DecoderContext dc) throws Exception {
         int[] fs = new int[2]; fs[0] = br.next(); fs[1] = br.next();
         int frameSize = (fs[0] << 8) + fs[1];
         
@@ -59,7 +58,7 @@ public class FrameDecoderProcedure {
             marker[0] = marker[1]; marker[1] = br.next();
         }
 
-        return sdp.decodeScan(br, dc);
+        sdp.decodeScan(br, dc);
         
         //TODO: check for EOI(end of image marker)
     }

@@ -16,9 +16,9 @@ import decoder.DecoderContext;
 import decoder.DecoderControlProcedure;
 import markers.Image;
 import util.ComponentExpander;
-import util.ComponentRotator;
+import util.ComponentSplitter;
 import util.ComponentSquasher;
-import util.FileSystemBmpAssembler;
+import util.ComponentsAssembler;
 import util.TmpDirManager;
 
 public class JpegsProcessingProcedure {
@@ -27,9 +27,11 @@ public class JpegsProcessingProcedure {
 	
 	private ComponentExpander ce = new ComponentExpander();
 	
-	private ComponentRotator cr = new ComponentRotator();
+	private ComponentSplitter csp = new ComponentSplitter();
 	
-	private ComponentSquasher cs = new ComponentSquasher();
+	private ComponentSquasher csq = new ComponentSquasher();
+	
+	private ComponentsAssembler ca= new ComponentsAssembler();
 	
 	private TmpDirManager tmpDirManager = new TmpDirManager();
 	
@@ -113,23 +115,13 @@ public class JpegsProcessingProcedure {
 					try {
 						DecoderContext dc = new DecoderContext();
 						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
-						Image img = dcp.decodeImage(dc);
+						dcp.decodeImage(dc);
 						
 						writer.ce.extend(dc);
-						writer.cr.rotate(dc);
-						writer.cs.squash(dc);
+						writer.csp.rotate(dc);
+						writer.csq.squash(dc);
+						writer.ca.convert(dc, fileName);
 						
-						FileSystemBmpAssembler fsba= new FileSystemBmpAssembler();
-						Pixel[][] pixels = fsba.convert(dc, rpBmp.getFileName().toString());
-						
-//						pixels = new PixelConverter().scale(pixels);
-//						Pixel[][] pixels = pc.scale(pc.convert(img));
-						
-//						writer.write(outputRoot, 
-//									 rpBmp.getParent() == null ? Paths.get("") : rpBmp.getParent(), 
-//									 rpBmp.getFileName(), 
-//									 pixels);
-
 						logger.info(file + " is processed");
 					} catch (Throwable th) {
 						logger.error(file + " fails with " + th.toString());

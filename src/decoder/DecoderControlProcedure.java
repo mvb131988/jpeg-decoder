@@ -47,14 +47,12 @@ public class DecoderControlProcedure {
         br = new BufferedReader(is);
     }
     
-    public Image decodeImage(DecoderContext dc) throws Exception {
-        Image img = decodeImageInternally(dc);
+    public void decodeImage(DecoderContext dc) throws Exception {
+        decodeImageInternally(dc);
         br.close();
-        
-        return img;
     }
     
-    private Image decodeImageInternally(DecoderContext dc) throws Exception {
+    private void decodeImageInternally(DecoderContext dc) throws Exception {
         //read SOI(start of image marker)
         int[] soi = new int[2]; soi[0] = br.next(); soi[1] = br.next();
         if(soi[0] != 0xff && soi[1] != 0xd8) throw new Exception("SOI not found");
@@ -78,7 +76,7 @@ public class DecoderControlProcedure {
             marker[0] = marker[1]; marker[1] = br.next();
         }
         
-        return fdp.decodeFrame(br, dc);
+        fdp.decodeFrame(br, dc);
     }
     
     private List<HuffmanTableSpecification> decodeHuffmanTable() throws IOException {
