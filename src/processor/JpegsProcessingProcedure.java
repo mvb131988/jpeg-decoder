@@ -83,14 +83,43 @@ public class JpegsProcessingProcedure {
 				if(extension.equals("jpg")) {
 					String bmpName = bmpFileName(file).toString();
 					try {
+						logger.info(file + " start processing");
+						
 						DecoderContext dc = new DecoderContext();
 						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
 						dcp.decodeImage(dc);
 						
+						logger.info("Extension MCUs start (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
 						jpp.ce.extend(dc);
+						
+						logger.info("Extension MCUs finished (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
+						logger.info("Rotation MCUs start (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
 						jpp.csp.rotate(dc);
+						
+						logger.info("Rotation MCUs finished (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
+						logger.info("Squashing MCUs start (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
 						jpp.csq.squash(dc);
+						
+						logger.info("Squashing MCUs finished (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
+						logger.info("Bmp assembling start (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+						
 						jpp.ca.convert(dc, bmpName);
+						
+						logger.info("Bmp assembling finished (used space) " + 
+				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
 						
 						logger.info(file + " is processed");
 					} catch (Throwable th) {

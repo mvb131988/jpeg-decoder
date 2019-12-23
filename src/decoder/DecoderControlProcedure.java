@@ -9,7 +9,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import markers.HuffmanTableSpecification;
-import markers.Image;
 import markers.QuantizationTableSpecification;
 import util.BufferedReader;
 

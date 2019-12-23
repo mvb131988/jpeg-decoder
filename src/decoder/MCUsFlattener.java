@@ -24,9 +24,6 @@ public class MCUsFlattener {
         try(FileSystemMCUReader fsmr = new FileSystemMCUReader(numberOfDu)) {
         	flattenMCUsInternally(numberOfMcu, fsmr, dc);
         }
-        
-        logger.info("Free memory " + (Runtime.getRuntime().freeMemory())/1_000_000 +
-		   " Total memory"  + (Runtime.getRuntime().totalMemory())/1_000_000);
 	}
 	
 	/**
@@ -71,13 +68,10 @@ public class MCUsFlattener {
                     cas[i].add(mcu[duI++]);
                     sizes[i]--;
                 }
-            logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         }
         
         //close component writers(output/component files) in the end
         for(int i=0; i<nComponents; i++) cas[i].close();
-        
-        logger.info((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     } 
     
     private static class ComponentAssembler {

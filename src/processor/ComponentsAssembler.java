@@ -44,7 +44,6 @@ public class ComponentsAssembler {
 				}
 				fsbw.writePixel(p);
 			}
-			System.out.println("Row +" + i);
 		}
 		
 		//close writer
