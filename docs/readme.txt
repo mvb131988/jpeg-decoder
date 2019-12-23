@@ -43,7 +43,7 @@ scp -P 51313 jpeg-decoder.jar pi@92.115.183.17:/usr/jpeg-decoder
 scp -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs/app.log /c/endava/workspace/jpeg-decoder/target
 
 Run 
-nohup java -jar -Dname=jpeg-decoder jpeg-decoder.jar >/dev/null &
+nohup java -jar -Xmx16m -Dname=jpeg-decoder jpeg-decoder.jar >/dev/null &
 
 #######################################################################
 monitoring

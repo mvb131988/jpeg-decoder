@@ -23,7 +23,7 @@ public class FileSystemBmpWriter implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public FileSystemBmpWriter(String fileName) throws IOException {
-		Path p = Paths.get(AppProperties.getOutputPath() + "\\" + fileName);
+		Path p = Paths.get(AppProperties.getOutputPath() + fileName);
 		Files.deleteIfExists(p);
 		Files.createFile(p);
 		

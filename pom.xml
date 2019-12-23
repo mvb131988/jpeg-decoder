@@ -76,7 +76,7 @@
 			<properties>
 				<log>C:\endava\workspace\jpeg-decoder\logs\</log>
 				<input-path>C:\endava\workspace\jpeg-decoder\input</input-path>
-				<output-path>C:\endava\workspace\jpeg-decoder\output</output-path>
+				<output-path>C:\endava\workspace\jpeg-decoder\output\</output-path>
 				<tmp-path>C:\endava\workspace\jpeg-decoder\tmp\</tmp-path>
 			</properties>
 		</profile>
@@ -85,7 +85,7 @@
 			<properties>
 				<log>/media/pi/seagate/repo-min/.logs/</log>
 				<input-path>/media/pi/seagate/repo/photo/2019/zurich_03</input-path>
-				<output-path>/media/pi/seagate/repo-min/photo-min</output-path>
+				<output-path>/media/pi/seagate/repo-min/photo-min/</output-path>
 				<tmp-path>/media/pi/seagate/repo-min/.tmp/</tmp-path>
 			</properties>
 		</profile>

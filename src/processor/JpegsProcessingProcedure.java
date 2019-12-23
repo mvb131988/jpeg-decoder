@@ -42,7 +42,7 @@ public class JpegsProcessingProcedure {
      * @throws IOException 
      */
     public void writeAll(Path inputRoot, Path outputRoot) throws IOException {
-    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot, outputRoot));
+    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot));
     }	
     
     /**
@@ -59,12 +59,9 @@ public class JpegsProcessingProcedure {
     	
     	private Path inputRoot;
     	
-    	private Path outputRoot;
-    	
-    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot, Path outputRoot) {
+    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot) {
     		this.jpp = jpp;
     		this.inputRoot = inputRoot;
-    		this.outputRoot = outputRoot;
     	}
     	
 		@Override
