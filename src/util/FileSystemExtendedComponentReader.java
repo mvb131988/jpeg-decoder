@@ -12,15 +12,17 @@ import main.AppProperties;
 
 public class FileSystemExtendedComponentReader implements AutoCloseable {
 
-private InputStream is;
+	private InputStream is;
 	
 	//component serial number(value from {0,1,2})
 	private int componentId;
 	
+	private Path p;
+	
 	public FileSystemExtendedComponentReader(int componentId) throws IOException {
 		this.componentId = componentId;
 		
-		Path p = Paths.get(AppProperties.getTmpPath() + "ext_component_" + componentId);
+		p = Paths.get(AppProperties.getTmpPath() + "ext_component_" + componentId);
 		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ), 262_144);
 	}
 	
@@ -32,6 +34,7 @@ private InputStream is;
 	@Override
 	public void close() throws Exception {
 		is.close();
+		Files.deleteIfExists(p);
 	}
 	
 }

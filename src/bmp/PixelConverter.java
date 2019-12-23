@@ -1,4 +1,4 @@
-package persister;
+package bmp;
 
 import markers.Image;
 

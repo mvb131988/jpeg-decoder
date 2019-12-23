@@ -1,8 +1,10 @@
-package util;
+package processor;
 
 import java.io.IOException;
 
 import decoder.DecoderContext;
+import util.FileSystemExtendedComponentReader;
+import util.FileSystemReverseOrderRowWriter;
 
 /**
  * Splits component file into rows of samples (1 file per 1 row)

@@ -23,8 +23,6 @@ public class FileSystemComponentWriter implements AutoCloseable {
 	public FileSystemComponentWriter(int componentId) throws IOException {
 		this.componentId = componentId;
 		
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		
 		Path p = Paths.get(AppProperties.getTmpPath() + 
 						   "component_" + componentId);
 		Files.deleteIfExists(p);

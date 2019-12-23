@@ -7,6 +7,7 @@ import org.junit.Test;
 import decoder.DecoderContext;
 import decoder.DimensionsContext;
 import markers.FrameHeader;
+import processor.ComponentExpander;
 
 public class ComponentExpanderTest {
 

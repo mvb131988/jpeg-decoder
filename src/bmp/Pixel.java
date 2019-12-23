@@ -1,4 +1,4 @@
-package persister;
+package bmp;
 
 public class Pixel {
     public int r;

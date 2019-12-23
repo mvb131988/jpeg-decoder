@@ -19,13 +19,10 @@ public class FileSystemReverseOrderRowWriter implements AutoCloseable {
 	private OutputStream os;
 	
 	public FileSystemReverseOrderRowWriter(int componentId, int rowNumber) throws IOException {
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()).resolve("rows"));
-		
 		Path p = Paths.get(AppProperties.getTmpPath()) 
 					  .resolve("rows")
 					  .resolve("component_" + componentId + 
 							   "_row_" + rowNumber);
-		
 		Files.deleteIfExists(p);
 		Files.createFile(p);
 		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE), 262_144);

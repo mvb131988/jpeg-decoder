@@ -26,8 +26,6 @@ public class FileSystemExtendedRowReader implements AutoCloseable {
 		this.componentId = componentId;
 		this.rowNumber = rowNumber;
 		
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		
 		p = Paths.get(AppProperties.getTmpPath() + 
 									"ext_component_" + componentId + 
 									"_row_" + rowNumber);

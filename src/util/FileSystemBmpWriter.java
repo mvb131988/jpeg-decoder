@@ -8,10 +8,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import bmp.BmpFileHeader;
+import bmp.BmpFileHeaderRaw;
+import bmp.Pixel;
 import main.AppProperties;
-import persister.BmpFileHeader;
-import persister.BmpFileHeaderRaw;
-import persister.Pixel;
 
 public class FileSystemBmpWriter implements AutoCloseable {
 
@@ -23,8 +23,6 @@ public class FileSystemBmpWriter implements AutoCloseable {
 	 * @throws IOException
 	 */
 	public FileSystemBmpWriter(String fileName) throws IOException {
-		Files.createDirectories(Paths.get(AppProperties.getOutputPath()));
-		
 		Path p = Paths.get(AppProperties.getOutputPath() + "\\" + fileName);
 		Files.deleteIfExists(p);
 		Files.createFile(p);

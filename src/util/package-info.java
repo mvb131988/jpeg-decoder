@@ -23,7 +23,8 @@
  *     				
  * 
  * (3) FileSytemRowWriter, 
- * 	   FileSytemRowReader 
+ * 	   FileSytemRowReader
+ * 	   FileSystemComponentWriter	 
  * 
  * 	   Transforms DU rows into image rows(where each sample is placed in the correct position)
  *     
@@ -43,7 +44,21 @@
  * (5) FileSystemExtendedComponentReader 
  * 
  * 	   Reads extended components    
- *  
+ * 
+ * (6) FileSystemReverseOrderRowReader,
+ * 	   FileSystemReverseOrderRowWriter
+ * 	
+ *     Read/write operation on the file that contains all rows of the extended component 
+ *     in reverse order
+ *     
+ * (7) FileSystemSquashedComponentReader,
+ * 	   FileSystemSquashedComponentWriter     
+ * 	
+ * 	   Read/write operation on the file that contains resized(squashed) image
+ *     components
+ *     
+ * (8) FileSystemBmpWriter
+ * 	   Based on the output from 7(3 image components) writes output bmp file  	 
  */
 
 package util;

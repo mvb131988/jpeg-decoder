@@ -1,4 +1,4 @@
-package persister;
+package bmp;
 
 /**
  * Fields are declared in the same order as they go in bmp file header(do not change).

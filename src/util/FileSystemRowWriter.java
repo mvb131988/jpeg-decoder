@@ -36,8 +36,6 @@ public class FileSystemRowWriter implements AutoCloseable {
 		this.lineNumber = lineNumber;
 		this.extSamplesCount = extSamplesCount;
 		
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		
 		Path p = Paths.get(AppProperties.getTmpPath() + 
 						   "component_" + componentId + 
 						   "_row_" + rowNumber + 

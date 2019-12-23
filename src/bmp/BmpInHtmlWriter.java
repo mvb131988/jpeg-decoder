@@ -1,4 +1,4 @@
-package persister;
+package bmp;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

@@ -24,8 +24,6 @@ public class FileSystemDUWriter implements AutoCloseable {
 		this.componentId = componentId;
 		this.rowNumber = rowNumber;
 		
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		
 		Path p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId + "_row_" + rowNumber);
 		Files.deleteIfExists(p);
 		Files.createFile(p);

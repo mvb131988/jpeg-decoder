@@ -1,6 +1,8 @@
-package util;
+package processor;
 
 import decoder.DecoderContext;
+import util.FileSystemReverseOrderRowReader;
+import util.FileSystemSquashedComponentWriter;
 
 public class ComponentSquasher {
 

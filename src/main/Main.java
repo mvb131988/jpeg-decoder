@@ -2,7 +2,7 @@ package main;
 
 import java.nio.file.Paths;
 
-import persister.JpegsProcessingProcedure;
+import processor.JpegsProcessingProcedure;
 
 //https://www.w3.org/Graphics/JPEG/itu-t81.pdf
 //https://www.ece.ucdavis.edu/cerl/reliablejpeg/compression/

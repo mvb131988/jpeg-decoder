@@ -1,8 +1,10 @@
-package util;
+package processor;
 
+import bmp.BmpFileHeader;
+import bmp.Pixel;
 import decoder.DecoderContext;
-import persister.BmpFileHeader;
-import persister.Pixel;
+import util.FileSystemBmpWriter;
+import util.FileSystemSquashedComponentReader;
 
 /**
  * Combines 3 image components and produces bmp file as an output result. 

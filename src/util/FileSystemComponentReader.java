@@ -17,10 +17,12 @@ public class FileSystemComponentReader implements AutoCloseable {
 	//component serial number(value from {0,1,2})
 	private int componentId;
 	
+	private Path p;
+	
 	public FileSystemComponentReader(int componentId) throws IOException {
 		this.componentId = componentId;
 		
-		Path p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId);
+		p = Paths.get(AppProperties.getTmpPath() + "component_" + componentId);
 		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ), 262_144);
 	}
 	
@@ -32,6 +34,7 @@ public class FileSystemComponentReader implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		is.close();
+		Files.deleteIfExists(p);
 	}
 
 }

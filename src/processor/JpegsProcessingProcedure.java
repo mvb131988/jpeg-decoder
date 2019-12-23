@@ -1,7 +1,6 @@
-package persister;
+package processor;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -14,11 +13,6 @@ import org.apache.logging.log4j.Logger;
 
 import decoder.DecoderContext;
 import decoder.DecoderControlProcedure;
-import markers.Image;
-import util.ComponentExpander;
-import util.ComponentSplitter;
-import util.ComponentSquasher;
-import util.ComponentsAssembler;
 import util.TmpDirManager;
 
 public class JpegsProcessingProcedure {
@@ -38,29 +32,6 @@ public class JpegsProcessingProcedure {
 	public JpegsProcessingProcedure() throws IOException {
 		tmpDirManager.init();
 	}
-	
-    /**
-     * 
-     * @param root - root of the file system, that will persist bmp images(the result
-     *    			 of jpeg transformation, found in inputPath)
-     * @param relativePath - path, relative to the root without fileName
-     * @param fileName - bmp file name
-     * @param pixels
-     * @throws IOException
-     */
-    public void write(Path root, Path relativePath, Path fileName, Pixel[][] pixels) throws IOException {
-        if (!Files.exists(root.resolve(relativePath))) {
-    		Files.createDirectories(root.resolve(relativePath));
-    	}
-    	
-        BmpFile f = new BmpFile(pixels);
-        //final absolute path of the bmp file
-        Path path = root.resolve(relativePath).resolve(fileName);
-        try(OutputStream os = Files.newOutputStream(path)) {
-            os.write(f.rawHeader());
-            os.write(f.rawPixels());
-        }
-    }
     
     /**
      * Finds all jpeg files in all sub directories relative to the root path,
@@ -84,14 +55,14 @@ public class JpegsProcessingProcedure {
      */
     private static class JpegFilesVisitor implements FileVisitor<Path> {
 
-    	private JpegsProcessingProcedure writer;
+    	private JpegsProcessingProcedure jpp;
     	
     	private Path inputRoot;
     	
     	private Path outputRoot;
     	
-    	public JpegFilesVisitor(JpegsProcessingProcedure writer, Path inputRoot, Path outputRoot) {
-    		this.writer = writer;
+    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot, Path outputRoot) {
+    		this.jpp = jpp;
     		this.inputRoot = inputRoot;
     		this.outputRoot = outputRoot;
     	}
@@ -103,24 +74,23 @@ public class JpegsProcessingProcedure {
 
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-			writer.tmpDirManager.clean();
+			jpp.tmpDirManager.clean();
 			
 			String fileName = file.getFileName().toString();
 			String extension = null; 
 			if(fileName.lastIndexOf(".") != -1) {
 				extension = fileName.substring(fileName.lastIndexOf(".")+1);
 				if(extension.equals("jpg")) {
-					//bmp file relative path including file name
-					Path rpBmp = bmpRelativePath(file);
+					String bmpName = bmpFileName(file).toString();
 					try {
 						DecoderContext dc = new DecoderContext();
 						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
 						dcp.decodeImage(dc);
 						
-						writer.ce.extend(dc);
-						writer.csp.rotate(dc);
-						writer.csq.squash(dc);
-						writer.ca.convert(dc, fileName);
+						jpp.ce.extend(dc);
+						jpp.csp.rotate(dc);
+						jpp.csq.squash(dc);
+						jpp.ca.convert(dc, bmpName);
 						
 						logger.info(file + " is processed");
 					} catch (Throwable th) {
@@ -142,15 +112,9 @@ public class JpegsProcessingProcedure {
 			return FileVisitResult.CONTINUE;
 		}
     	
-		/**
-		 * 
-		 * @param apJpeg - jpeg absolute path
-		 * @param rpJpeg - jpeg realative path
-		 * @return
-		 */
-		private Path bmpRelativePath(Path apJpeg) {
+		private Path bmpFileName(Path jpegFileName) {
 			//jpg file relative path including file name
-			Path rpJpeg = inputRoot.relativize(apJpeg);
+			Path rpJpeg = inputRoot.relativize(jpegFileName);
 			
 			//file extension substitution
 			String srp0 = rpJpeg.toString();

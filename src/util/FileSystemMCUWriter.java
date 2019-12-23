@@ -20,8 +20,6 @@ public class FileSystemMCUWriter implements AutoCloseable {
 	private OutputStream os;
 	
 	public FileSystemMCUWriter() throws IOException {
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		
 		Path p = Paths.get(AppProperties.getTmpPath() + "mcus");
 		Files.deleteIfExists(p);
 		Files.createFile(p);

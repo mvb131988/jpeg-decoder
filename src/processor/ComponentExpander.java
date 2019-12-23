@@ -1,8 +1,12 @@
-package util;
+package processor;
 
 import java.io.IOException;
 
 import decoder.DecoderContext;
+import util.FileSystemComponentReader;
+import util.FileSystemExtendedComponentWriter;
+import util.FileSystemExtendedRowReader;
+import util.FileSystemExtendedRowWriter;
 
 /**
  * Pre-condition: there already exist three files in the file system(tmp dir), each file
@@ -58,7 +62,6 @@ import decoder.DecoderContext;
  */
 public class ComponentExpander {
 	
-	//TODO: unit testing
 	public void extend(DecoderContext dc) throws Exception {
 		int maxVs = maxSamplingFactor(dc.frameHeader.Vs);
 		int maxHs = maxSamplingFactor(dc.frameHeader.Hs);

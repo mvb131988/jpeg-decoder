@@ -35,7 +35,7 @@ public class FileSystemReverseOrderRowReader implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		is.close();
-//		Files.deleteIfExists(p);
+		Files.deleteIfExists(p);
 	}
 	
 }
