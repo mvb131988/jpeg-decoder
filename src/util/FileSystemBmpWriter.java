@@ -25,6 +25,7 @@ public class FileSystemBmpWriter implements AutoCloseable {
 	public FileSystemBmpWriter(String fileName) throws IOException {
 		Path p = Paths.get(AppProperties.getOutputPath() + fileName);
 		Files.deleteIfExists(p);
+		Files.createDirectories(p.getParent());
 		Files.createFile(p);
 		
 		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE), 262_144);

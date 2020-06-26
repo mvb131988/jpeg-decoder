@@ -32,11 +32,10 @@ public class FileSystemExtendedRowWriter implements AutoCloseable {
 		this.rowNumber = rowNumber;
 		
 		Path p = Paths.get(AppProperties.getTmpPath() + 
-						   "ext_component_" + componentId + 
-						   "_row_" + rowNumber);
-		Files.deleteIfExists(p);
-		Files.createFile(p);
-		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.WRITE), 262_144);
+						   "ext_component_" + this.componentId + 
+						   "_row_" + this.rowNumber);
+		
+		os = new BufferedOutputStream(Files.newOutputStream(p, StandardOpenOption.CREATE), 262_144);
 	}
 
 	public void write(int sample) throws IOException {

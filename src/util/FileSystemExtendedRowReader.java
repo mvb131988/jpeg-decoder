@@ -27,8 +27,8 @@ public class FileSystemExtendedRowReader implements AutoCloseable {
 		this.rowNumber = rowNumber;
 		
 		p = Paths.get(AppProperties.getTmpPath() + 
-									"ext_component_" + componentId + 
-									"_row_" + rowNumber);
+									"ext_component_" + this.componentId + 
+									"_row_" + this.rowNumber);
 		is = new BufferedInputStream(Files.newInputStream(p, StandardOpenOption.READ), 262_144);
 	}
 	
@@ -40,7 +40,6 @@ public class FileSystemExtendedRowReader implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		is.close();
-		Files.deleteIfExists(p);
 	}
 	
 }
