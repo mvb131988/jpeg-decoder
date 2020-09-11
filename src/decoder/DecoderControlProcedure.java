@@ -8,6 +8,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import markers.HuffmanTableSpecification;
 import markers.QuantizationTableSpecification;
 import util.BufferedReader;
@@ -32,6 +35,8 @@ public class DecoderControlProcedure {
     private FrameDecoderProcedure fdp = new FrameDecoderProcedure();
     
     private HuffmanTableSpecificationDecoderProcedure htsdp = new HuffmanTableSpecificationDecoderProcedure();
+    
+    private static Logger logger = LogManager.getRootLogger();
     
 	private QuantizationTableSpecificationDecoderProcedure qtsdp = new QuantizationTableSpecificationDecoderProcedure();
     
@@ -58,7 +63,8 @@ public class DecoderControlProcedure {
         
         //lookup for start of frame SOF0 - Baseline DCT. Only this format is supported
         int[] marker = new int[2];  marker[0] = br.next(); marker[1] = br.next();
-        while(!(marker[0] == 0xff && marker[1] == 0xc0) || endOfFile(marker[0], marker[1])) {
+        while(!(marker[0] == 0xff && (marker[1] == 0xc0 || marker[1] == 0xc2))
+            || endOfFile(marker[0], marker[1])) {
             //TODO: interpret markers
             
             if(hd.isAppMarker(marker)) hd.skipAppMarker(br);
@@ -74,6 +80,9 @@ public class DecoderControlProcedure {
             
             marker[0] = marker[1]; marker[1] = br.next();
         }
+        
+        if (skip(marker[0], marker[1])) 
+          throw new Exception("Progressive DCT-based mode of operation is not supported"); 
         
         fdp.decodeFrame(br, dc);
     }
@@ -109,6 +118,15 @@ public class DecoderControlProcedure {
     //TODO: compare with Integer.MIN_VALUE, see BufferedReader for more details
     private boolean endOfFile(int m0, int m1) {
         return false;
+    }
+    
+    // Progressive DCT-based mode of operation is not supported
+    private boolean skip(int marker0, int marker1) {
+      if(marker0 == 0xff && marker1 == 0xc2) {
+        logger.info("Progressive DCT-based mode of operation is not supported");
+        return true;
+      }
+      return false;
     }
     
 }

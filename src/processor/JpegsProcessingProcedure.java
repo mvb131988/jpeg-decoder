@@ -42,7 +42,7 @@ public class JpegsProcessingProcedure {
      * @throws IOException 
      */
     public void writeAll(Path inputRoot, Path outputRoot) throws IOException {
-    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot));
+    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot, outputRoot));
     }	
     
     /**
@@ -59,98 +59,117 @@ public class JpegsProcessingProcedure {
     	
     	private Path inputRoot;
     	
-    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot) {
+    	private Path outputRoot;
+    	
+    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot, Path outputRoot) {
     		this.jpp = jpp;
     		this.inputRoot = inputRoot;
+    		this.outputRoot = outputRoot;
     	}
     	
-		@Override
-		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-			jpp.tmpDirManager.clean();
-			
-			String fileName = file.getFileName().toString();
-			String extension = null; 
-			if(fileName.lastIndexOf(".") != -1) {
-				extension = fileName.substring(fileName.lastIndexOf(".")+1);
-				if(extension.equals("jpg")) {
-					String bmpName = bmpFileName(file).toString();
-					try {
-						logger.info(file + " start processing");
-						
-						DecoderContext dc = new DecoderContext();
-						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
-						dcp.decodeImage(dc);
-						
-						logger.info("Extension MCUs start (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						jpp.ce.extend(dc);
-						
-						logger.info("Extension MCUs finished (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						logger.info("Rotation MCUs start (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						jpp.csp.rotate(dc);
-						
-						logger.info("Rotation MCUs finished (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						logger.info("Squashing MCUs start (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						jpp.csq.squash(dc);
-						
-						logger.info("Squashing MCUs finished (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						logger.info("Bmp assembling start (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						jpp.ca.convert(dc, bmpName);
-						
-						logger.info("Bmp assembling finished (used space) " + 
-				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
-						
-						logger.info(file + " is processed");
-					} catch (Throwable th) {
-						logger.error(file + " fails with " + th.toString());
-						th.printStackTrace();
-					}
-				}
-			}
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-			return FileVisitResult.CONTINUE;
-		}
-
-		@Override
-		public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-			return FileVisitResult.CONTINUE;
-		}
-    	
-		private Path bmpFileName(Path jpegFileName) {
-			//jpg file relative path including file name
-			Path rpJpeg = inputRoot.relativize(jpegFileName);
-			
-			//file extension substitution
-			String srp0 = rpJpeg.toString();
-			srp0 = srp0.substring(0, srp0.lastIndexOf(".")).concat(".bmp");
-			//bmp file relative path including file name
-			Path rpBmp = Paths.get(srp0);
-			
-			return rpBmp;
-		}
-    
+  		@Override
+  		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+  			return FileVisitResult.CONTINUE;
+  		}
+  
+  		@Override
+  		public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+  			jpp.tmpDirManager.clean();
+  			
+  			String fileName = file.getFileName().toString();
+  			String extension = null; 
+  			if(fileName.lastIndexOf(".") != -1) {
+  				extension = fileName.substring(fileName.lastIndexOf(".")+1);
+  				if(extension.equals("jpg")) {
+  					String bmpName = bmpFileName(file).toString();
+  					
+  					Path bmpOutputPath = bmpOutputPath(bmpFileName(file));
+  					//if min img exists don't recreate it
+  					if(!Files.exists(bmpOutputPath)) {
+    					try {
+    						logger.info(file + " start processing");
+    						
+    						DecoderContext dc = new DecoderContext();
+    						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
+    						dcp.decodeImage(dc);
+    						
+    						logger.info("Extension MCUs start (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						jpp.ce.extend(dc);
+    						
+    						logger.info("Extension MCUs finished (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						logger.info("Rotation MCUs start (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						jpp.csp.rotate(dc);
+    						
+    						logger.info("Rotation MCUs finished (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						logger.info("Squashing MCUs start (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						jpp.csq.squash(dc);
+    						
+    						logger.info("Squashing MCUs finished (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						logger.info("Bmp assembling start (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						jpp.ca.convert(dc, bmpName);
+    						
+    						logger.info("Bmp assembling finished (used space) " + 
+    				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
+    						
+    						logger.info(file + " is processed");
+    					} catch (Throwable th) {
+    						logger.error(file + " fails with " + th.toString());
+    						th.printStackTrace();
+    					}
+  					} else {
+  					  logger.info("Skipping already existed file: " + bmpOutputPath);
+  					}
+  				}
+  			}
+  			return FileVisitResult.CONTINUE;
+  		}
+  
+  		@Override
+  		public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+  			return FileVisitResult.CONTINUE;
+  		}
+  
+  		@Override
+  		public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+  			return FileVisitResult.CONTINUE;
+  		}
+      	
+  		private Path bmpFileName(Path jpegFileName) {
+  			//jpg file relative path including file name
+  			Path rpJpeg = inputRoot.relativize(jpegFileName);
+  			
+  			//file extension substitution
+  			String srp0 = rpJpeg.toString();
+  			srp0 = srp0.substring(0, srp0.lastIndexOf(".")).concat(".bmp");
+  			//bmp file relative path including file name
+  			Path rpBmp = Paths.get(srp0);
+  			
+  			return rpBmp;
+  		}
+  		
+  		/**
+  		 * 
+  		 * @param bmpFileRelativePath - part of the bmp file path relative to the output root
+  		 * @return
+  		 */
+  		private Path bmpOutputPath(Path bmpFileRelativePath) {
+  		  return Paths.get(outputRoot.toString(), bmpFileRelativePath.toString());
+      }
+  		
     }
     
 }

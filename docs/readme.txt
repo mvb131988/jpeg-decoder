@@ -134,3 +134,13 @@ Use InstrumentationAgent.getObjectSize(obj) to get its size in bytes
 to get total available, free and used memory 
 
 (5) To run use param -javaagent:target\java-agent-1.jar when launch with java -jar
+
+#######################################################################
+Accidents
+#######################################################################
+Description: 'ls cannot access input/output error' happens in .tmp dir
+Solution: 
+	1 Connect hard drive to Win system, 
+    2 Run: 
+    	chkdsk /f e:
+  
