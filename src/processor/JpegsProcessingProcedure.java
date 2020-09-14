@@ -80,7 +80,7 @@ public class JpegsProcessingProcedure {
   			String extension = null; 
   			if(fileName.lastIndexOf(".") != -1) {
   				extension = fileName.substring(fileName.lastIndexOf(".")+1);
-  				if(extension.equals("jpg")) {
+  				if(extension.toLowerCase().equals("jpg")) {
   					String bmpName = bmpFileName(file).toString();
   					
   					Path bmpOutputPath = bmpOutputPath(bmpFileName(file));
