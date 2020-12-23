@@ -1,0 +1,3 @@
+(1) Run periodically, scan repository with big-imgs, generate small-imgs for
+any big-img without small-img match
+(2) New type of jpeg that couldn't be decoded
