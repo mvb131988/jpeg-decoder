@@ -45,6 +45,42 @@ scp -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs/app.log /c/endava
 Run 
 nohup java -jar -Xmx16m -Dname=jpeg-decoder jpeg-decoder.jar >/dev/null &
 
+
+########################################################################################################
+###	Create Linux job(using systemd) Automatic start on system startup
+########################################################################################################
+
+(1) Move to /lib/systemd/system
+
+(2) Copy jpeg-decoder.service into
+
+	scp -P 51313 jpeg-decoder.service pi@92.115.183.17:/usr/jpeg-decoder
+ 	
+ 	ssh pi@92.115.183.17 -p 51313
+ 	sudo cp jpeg-decoder.service /lib/systemd/system
+
+(3) Adjust ExecStart:
+	- set correct full java path
+	- set correct full jpeg-decoder path
+	
+(4) Start as service:
+	
+	sudo systemctl enable jpeg-decoder.service
+	sudo systemctl start jpeg-decoder.service
+	
+	To check servcie status:
+	
+	sudo systemctl status jpeg-decoder.service
+
+	
+#######################################################################
+Download logs
+#######################################################################	
+scp -r -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs /d/temp/remote_logs
+scp -r -P 51313 pi@95.65.61.110:/media/pi/seagate/repo-min/.logs/app.log /c/endava/temp/95.65.61.110/	
+scp -r -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs/app.log /c/endava/temp/95.65.61.110/.log	
+
+
 #######################################################################
 monitoring
 #######################################################################

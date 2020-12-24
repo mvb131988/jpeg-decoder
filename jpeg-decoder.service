@@ -1,0 +1,12 @@
+[Unit]
+Description=Jpeg decoder
+
+[Service]
+ExecStart=/usr/java/jdk1.8.0_151/bin/java -jar -Xmx16m -Dname=jpeg-decoder /usr/jpeg-decoder/jpeg-decoder.jar
+StandardOutput=null
+StandardError=null
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+Alias=jpeg-decoder.service

@@ -32,22 +32,22 @@ public class RestartIntervalDecoderProcedure {
         
         int numberOfMcu = nX*nY;
         
-        logger.info("Decode MCUs start (used space) " + 
+        logger.debug("Decode MCUs start (used space) " + 
         		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         
         try(FileSystemMCUWriter fsmw = new FileSystemMCUWriter()) {
         	decodeRestartIntervalInternally(br, dc, fsmw, numberOfMcu);
         }
         
-        logger.info("Decode MCUs finished (used space) " +
+        logger.debug("Decode MCUs finished (used space) " +
         		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         
-        logger.info("Flattening MCUs start (used space) " + 
+        logger.debug("Flattening MCUs start (used space) " + 
         		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
         
         msf.flattenMCUs(numberOfMcu, dc);
         
-        logger.info("Flattening MCUs finished (used space) " + 
+        logger.debug("Flattening MCUs finished (used space) " + 
         		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     }
 
