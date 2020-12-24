@@ -16,5 +16,13 @@ public class AppProperties {
 	public static String getTmpPath() {
 		return ResourceBundle.getBundle("app").getString("tmp-path");
 	}
-
+	
+	public static long getCooldownFile() {
+	  return Long.parseLong(ResourceBundle.getBundle("app").getString("cooldown.file"));
+	}
+	
+	public static long getCooldownRepo() {
+    return Long.parseLong(ResourceBundle.getBundle("app").getString("cooldown.repo"));
+  }
+	
 }

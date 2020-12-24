@@ -15,6 +15,14 @@ public class Main {
     	//of jpeg transformation, found in inputPath)
     	String outputPath = AppProperties.getOutputPath();
     	
-    	new JpegsProcessingProcedure().writeAll(Paths.get(inputPath), Paths.get(outputPath));
+    	long cooldownRepo = AppProperties.getCooldownRepo();
+    	long cooldownFile = AppProperties.getCooldownFile();
+    	
+    	for(;;) {
+    	  new JpegsProcessingProcedure().writeAll(Paths.get(inputPath), 
+    	                                          Paths.get(outputPath), 
+    	                                          cooldownFile);
+    	  Thread.sleep(cooldownRepo);
+    	}
     }
 }

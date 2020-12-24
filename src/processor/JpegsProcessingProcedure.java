@@ -39,10 +39,11 @@ public class JpegsProcessingProcedure {
      *
      * @param inputRoot - root of the file system with jpeg files
      * @param outputRoot - root of the file system with bmp files
+     * @param cooldownFile - time two wait between two consequent file processing
      * @throws IOException 
      */
-    public void writeAll(Path inputRoot, Path outputRoot) throws IOException {
-    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot, outputRoot));
+    public void writeAll(Path inputRoot, Path outputRoot, long cooldownFile) throws IOException {
+    	Files.walkFileTree(inputRoot, new JpegFilesVisitor(this, inputRoot, outputRoot, cooldownFile));
     }	
     
     /**
@@ -61,10 +62,16 @@ public class JpegsProcessingProcedure {
     	
     	private Path outputRoot;
     	
-    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, Path inputRoot, Path outputRoot) {
+    	private long cooldownFile;
+    	
+    	public JpegFilesVisitor(JpegsProcessingProcedure jpp, 
+    	                        Path inputRoot, 
+    	                        Path outputRoot, 
+    	                        long cooldownFile) {
     		this.jpp = jpp;
     		this.inputRoot = inputRoot;
     		this.outputRoot = outputRoot;
+    		this.cooldownFile = cooldownFile;
     	}
     	
   		@Override
@@ -93,39 +100,42 @@ public class JpegsProcessingProcedure {
     						DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
     						dcp.decodeImage(dc);
     						
-    						logger.info("Extension MCUs start (used space) " + 
+    						logger.debug("Extension MCUs start (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
     						jpp.ce.extend(dc);
     						
-    						logger.info("Extension MCUs finished (used space) " + 
+    						logger.debug("Extension MCUs finished (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
-    						logger.info("Rotation MCUs start (used space) " + 
+    						logger.debug("Rotation MCUs start (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
     						jpp.csp.rotate(dc);
     						
-    						logger.info("Rotation MCUs finished (used space) " + 
+    						logger.debug("Rotation MCUs finished (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
-    						logger.info("Squashing MCUs start (used space) " + 
+    						logger.debug("Squashing MCUs start (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
     						jpp.csq.squash(dc);
     						
-    						logger.info("Squashing MCUs finished (used space) " + 
+    						logger.debug("Squashing MCUs finished (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
-    						logger.info("Bmp assembling start (used space) " + 
+    						logger.debug("Bmp assembling start (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
     						jpp.ca.convert(dc, bmpName);
     						
-    						logger.info("Bmp assembling finished (used space) " + 
+    						logger.debug("Bmp assembling finished (used space) " + 
     				        		(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1_000_000 + " MB");
     						
     						logger.info(file + " is processed");
+    						
+    						//cooldown to not overload the machine
+    						Thread.sleep(cooldownFile);
     					} catch (Throwable th) {
     						logger.error(file + " fails with " + th.toString());
     						th.printStackTrace();

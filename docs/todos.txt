@@ -1,3 +1,5 @@
 (1) Run periodically, scan repository with big-imgs, generate small-imgs for
-any big-img without small-img match
+any big-img without small-img match [DONE]
+
 (2) New type of jpeg that couldn't be decoded
+(3) sync with master branch. any other branches must be smaller than the master
