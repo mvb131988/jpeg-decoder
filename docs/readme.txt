@@ -179,4 +179,3 @@ Solution:
 	1 Connect hard drive to Win system, 
     2 Run: 
     	chkdsk /f e:
-  
