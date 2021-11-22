@@ -19,6 +19,11 @@
 				<filtering>true</filtering>
 			</resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>test-resources</directory>
+			</testResource>
+		</testResources>
 		<plugins>
 			<!-- download source code in Eclipse, best practice -->
 			<plugin>

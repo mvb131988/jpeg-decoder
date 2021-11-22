@@ -8,3 +8,7 @@ any big-img without small-img match [DONE]
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06332.JPG (initially corrupted file)  
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06468.JPG (initially corrupted file)
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06475.JPG (initially corrupted file)
+
+(5) wolf's folder is not opened (look up the browser console)
+(6) after file system was restored some min files have length 0,
+they are corrupted and needs to be recreated
