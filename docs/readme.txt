@@ -78,7 +78,7 @@ Download logs
 #######################################################################	
 scp -r -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs /d/temp/remote_logs
 scp -r -P 51313 pi@95.65.61.110:/media/pi/seagate/repo-min/.logs/app.log /c/endava/temp/95.65.61.110/	
-scp -r -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs/app.log /c/endava/temp/95.65.61.110/.log	
+scp -r -P 51313 pi@92.115.183.17:/media/pi/seagate/repo-min/.logs/app.log /c/endava/temp/92.115.183.17/
 
 
 #######################################################################
