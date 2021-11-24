@@ -1,14 +1,18 @@
-(1) Run periodically, scan repository with big-imgs, generate small-imgs for
-any big-img without small-img match [DONE]
-
 (2) New type of jpeg that couldn't be decoded
-(3) sync with master branch. any other branches must be smaller than the master
 
 (4) Unprocessed jpeg files
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06332.JPG (initially corrupted file)  
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06468.JPG (initially corrupted file)
 /media/pi/seagate/repo/photo/2011/Karpati_08_11/DSC06475.JPG (initially corrupted file)
 
+####### DONE #######
+
+(1) Run periodically, scan repository with big-imgs, generate small-imgs for
+any big-img without small-img match [DONE]
+
+(3) sync with master branch. any other branches must be smaller than the master [DONE]
+
 (5) wolf's folder is not opened (look up the browser console) [DONE]
+
 (6) after file system was restored some min files have length 0,
 they are corrupted and needs to be recreated [DONE]
