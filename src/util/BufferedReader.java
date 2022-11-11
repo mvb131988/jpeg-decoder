@@ -3,7 +3,7 @@ package util;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BufferedReader {
+public class BufferedReader implements AutoCloseable {
 
     private byte[] buffer;
     private int length;

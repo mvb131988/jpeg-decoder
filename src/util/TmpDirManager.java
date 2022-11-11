@@ -3,30 +3,46 @@ package util;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import main.AppProperties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TmpDirManager {
 
-	public void init() throws IOException {
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()));
-		Files.createDirectories(Paths.get(AppProperties.getTmpPath()).resolve("rows"));
+	private static Logger logger = LogManager.getRootLogger();
+	
+	public void init(String tmpPath) throws IOException {
+		Files.createDirectories(Paths.get(tmpPath));
+		Files.createDirectories(Paths.get(tmpPath).resolve("rows"));
 	}
 	
-	public void clean() {
-		for(File file: new File(Paths.get(AppProperties.getTmpPath()).toString()).listFiles()) 
-		    if (!file.isDirectory()) 
-		        file.delete();
-		
-		for(File file: new File(Paths.get(AppProperties.getTmpPath())
-									 .resolve("rows").toString())
-								 	 .listFiles()
-		   ) 
-		{ 
-		    if (!file.isDirectory()) 
-		        file.delete();
+	public void clean(String tmpPath) {
+		File[] files = new File(tmpPath).listFiles();
+		for(File f: files) {
+			Path current = Paths.get(tmpPath).resolve(f.getName());
+			if(f.isDirectory()) 
+				cleanUp(current.toString());
+			try {
+				if(!current.getFileName().toString().equals("rows"))
+					Files.delete(current);
+			} catch (IOException e) {
+				System.out.println(e);
+			}
 		}
 	}
 	
+	private void cleanUp(String path) {
+		File[] files = new File(path).listFiles();
+		for(File f: files) {
+			Path current = Paths.get(path).resolve(f.getName());
+			if(f.isDirectory()) cleanUp(current.toString());
+			try {
+				Files.delete(current);
+			} catch (IOException e) {
+				System.out.println(e);
+			}
+		}
+	}
 }

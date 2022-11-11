@@ -5,6 +5,8 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,6 +14,8 @@ import org.apache.logging.log4j.Logger;
 
 import decoder.DecoderContext;
 import decoder.DecoderControlProcedure;
+import main.AppProperties;
+import util.BufferedReader;
 import util.TmpDirManager;
 
 public class JpegsProcessingProcedure {
@@ -29,7 +33,7 @@ public class JpegsProcessingProcedure {
 	private TmpDirManager tmpDirManager = new TmpDirManager();
 	
 	public JpegsProcessingProcedure() throws IOException {
-		tmpDirManager.init();
+		tmpDirManager.init(AppProperties.getTmpPath());
 	}
     
   /**
@@ -77,16 +81,28 @@ public class JpegsProcessingProcedure {
 
     @Override
     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-      jpp.tmpDirManager.clean();
+      logger.info("Next file to analize: " + file);
+      
+      logger.info("Tmp dir clean up started");
+      try {
+    	  jpp.tmpDirManager.clean(AppProperties.getTmpPath());
+      } catch (Exception ex) {
+    	  logger.error("Tmp dir cleanup exception", ex);
+      } 
+      logger.info("Tmp dir clean up finished");
 
       JpegProcessDecision.JpegProcessDecisionContext result = jpd.decide(file);
       
       if (result.isJpeg && result.isProcessable) {
-        try {
+        try(BufferedReader br = 
+        		new BufferedReader(Files.newInputStream(
+        								Paths.get(file.toString()), StandardOpenOption.READ))) 
+        {
+        	
           logger.info(file + " start processing");
 
           DecoderContext dc = new DecoderContext();
-          DecoderControlProcedure dcp = new DecoderControlProcedure(file.toString());
+          DecoderControlProcedure dcp = new DecoderControlProcedure(br);
           dcp.decodeImage(dc);
 
           logger.debug("Extension MCUs start (used space) "
@@ -126,8 +142,7 @@ public class JpegsProcessingProcedure {
           // cooldown to not overload the machine
           Thread.sleep(cooldownFile);
         } catch (Throwable th) {
-          logger.error(file + " fails with " + th.toString());
-          th.printStackTrace();
+          logger.error(file + " fails with " + th.toString(), th);
         }
       } else {
         if(result.isJpeg) {
@@ -135,18 +150,19 @@ public class JpegsProcessingProcedure {
         }
       }
 
+      logger.info("File analysis has finished: " + file);
       return FileVisitResult.CONTINUE;
     }
 
-		@Override
-		public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-			return FileVisitResult.CONTINUE;
-		}
+	@Override
+	public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+		return FileVisitResult.CONTINUE;
+	}
 
-		@Override
-		public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-			return FileVisitResult.CONTINUE;
-		}
+	@Override
+	public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+		return FileVisitResult.CONTINUE;
+	}
     	
   }
     

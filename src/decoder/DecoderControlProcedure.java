@@ -42,13 +42,11 @@ public class DecoderControlProcedure {
     
     /**
      * 
-     * @param sPath - path to source(jpeg) image
+     * @param br - BufferedReader associated with a given jpeg image
      * @throws IOException 
      */
-    public DecoderControlProcedure(String sPath) throws IOException {
-        Path path = Paths.get(sPath);
-        InputStream is = Files.newInputStream(path, StandardOpenOption.READ);
-        br = new BufferedReader(is);
+    public DecoderControlProcedure(BufferedReader br) throws IOException {
+        this.br = br;
     }
     
     public void decodeImage(DecoderContext dc) throws Exception {

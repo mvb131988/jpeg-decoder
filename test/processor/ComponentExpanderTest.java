@@ -1,4 +1,4 @@
-package util;
+package processor;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,8 @@ import decoder.DecoderContext;
 import decoder.DimensionsContext;
 import markers.FrameHeader;
 import processor.ComponentExpander;
+import util.FileSystemComponentWriter;
+import util.FileSystemExtendedComponentReader;
 
 public class ComponentExpanderTest {
 
